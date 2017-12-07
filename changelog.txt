@@ -1,9 +1,9 @@
-[B]Version 4.0.12 (Nov 21, 2017)[/B]
+[B]Version 4.0.15 (Dec 7, 2017)[/B]
 - Code Base Changes:
     - None
 - Resolvers Added:
-    - clicknupload.org (MrBlamo)
-- Resolvers Fixed/Updated:
     - None
+- Resolvers Fixed/Updated:
+    - AllDebrid (Eldorado)
 - Languages Added/Updated
     - None
