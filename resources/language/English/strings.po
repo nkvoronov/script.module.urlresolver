@@ -194,7 +194,7 @@ msgid "Flashx Stream Authorization"
 msgstr "Flashx Stream Authorization"
 
 msgctxt "#33045"
-msgid AllDebrid Authorization Reset"
+msgid "AllDebrid Authorization Reset"
 msgstr ""
 
 msgctxt "#33046"
