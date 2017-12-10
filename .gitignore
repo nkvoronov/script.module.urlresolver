@@ -10,3 +10,4 @@ doc/resources
 .pydevproject
 /.settings
 /.idea
+*.mo
