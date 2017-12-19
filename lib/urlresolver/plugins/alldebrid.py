@@ -110,7 +110,7 @@ class AllDebridResolver(UrlResolver):
 
     # SiteAuth methods
     def login(self):
-        if not self.get_setting('username') and self.get_setting('password') and self.get_setting('token'):
+        if self.get_setting('username') and self.get_setting('password') and not self.get_setting('token'):
             self.authorize_resolver()
 
     def reset_authorization(self):
