@@ -22,5 +22,5 @@ logger = common.log_utils.Logger.get_logger(__name__)
 logger.disable()
 
 def get_media_url(url):
-    return helpers.get_media_url(url, patterns=['''var\svfile=["'](?P<url>http://[^'"]+)'''], result_blacklist=['logger', 'iframe', 'r.mp4', 'a.mp4', 'c.mp4'], generic_patterns=False ).replace(' ', '%20')
+    return helpers.get_media_url(url, patterns=['''var\svfilea=["'](?P<url>http://[^'"]+)'''], result_blacklist=['logger', 'iframe', 'r.mp4', 'a.mp4', 'c.mp4'], generic_patterns=False ).replace(' ', '%20')
     
