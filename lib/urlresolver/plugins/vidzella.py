@@ -41,7 +41,6 @@ class VidZellaResolver(UrlResolver):
             headers = dict((k, v[0]) for k, v in headers.iteritems())
 
         response = net.http_HEAD(url, headers=headers)
-        response_headers = response.get_headers(as_dict=True)
         if(response.get_url()):
             return response.get_url()
         else:
