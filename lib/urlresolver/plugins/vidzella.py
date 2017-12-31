@@ -42,7 +42,7 @@ class VidZellaResolver(UrlResolver):
 
         response = net.http_HEAD(url, headers=headers)
         if(response.get_url()):
-            return response.get_url()
+            return response.get_url() + helpers.append_headers(headers)
         else:
             raise ResolverError(common.i18n('no_video_link'))
     
