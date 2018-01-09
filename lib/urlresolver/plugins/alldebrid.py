@@ -23,12 +23,11 @@ from lib import helpers
 from urlresolver import common
 from urlresolver.common import i18n
 from urlresolver.resolver import UrlResolver, ResolverError
-from urlresolver.lib import kodi
 
 logger = common.log_utils.Logger.get_logger(__name__)
 logger.disable()
 
-AGENT = 'URLResolver.Kodi'
+AGENT = common.SMU_USER_AGENT
 
 class AllDebridResolver(UrlResolver):
     name = "AllDebrid"
@@ -70,7 +69,7 @@ class AllDebridResolver(UrlResolver):
             js_result = json.loads(result)
             logger.log_debug('AllDebrid resolve: [%s]' % js_result)
             if 'error' in js_result:
-                kodi.notify(msg=js_result['error'], duration=5000)
+                common.kodi.notify(msg=js_result['error'], duration=5000)
                 raise ResolverError('AllDebrid Error: %s (%s)' % (js_result['error'], js_result['errorCode']))
             elif js_result['success']:
                 if js_result['infos']['link']:
@@ -131,7 +130,7 @@ class AllDebridResolver(UrlResolver):
                 js_result = json.loads(self.net.http_GET(url).content)
         except urllib2.HTTPError as e:
             if e.code == 401:
-                kodi.notify(msg='Invalid username or password', duration=5000)
+                common.kodi.notify(msg='Invalid username or password', duration=5000)
                 try:
                     js_result = json.loads(e.read())
                     if 'error' in js_result:
@@ -142,7 +141,7 @@ class AllDebridResolver(UrlResolver):
                     msg = 'Unknown Error (2)'
                 raise ResolverError('AllDebrid Error: %s (%s)' % (msg, e.code))
             elif e.code == 429:
-                kodi.notify(msg='Please login on the Alldebrid website', duration=5000)
+                common.kodi.notify(msg='Please login on the Alldebrid website', duration=5000)
                 raise ResolverError('AllDebrid Error: blocked login (flood)')
             else:
                 raise ResolverError('AllDebrid Error: Unknown Error (3)')
