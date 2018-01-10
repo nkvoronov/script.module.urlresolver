@@ -27,7 +27,7 @@ from urlresolver.resolver import UrlResolver, ResolverError
 logger = common.log_utils.Logger.get_logger(__name__)
 logger.disable()
 
-AGENT = common.SMU_USER_AGENT
+AGENT = 'URLResolver.Kodi'
 
 class AllDebridResolver(UrlResolver):
     name = "AllDebrid"
