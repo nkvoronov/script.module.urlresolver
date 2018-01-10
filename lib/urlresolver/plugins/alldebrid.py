@@ -29,6 +29,7 @@ logger.disable()
 
 AGENT = 'URLResolver.Kodi'
 
+
 class AllDebridResolver(UrlResolver):
     name = "AllDebrid"
     domains = ['*']
