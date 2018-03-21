@@ -44,7 +44,10 @@ class OpenLoadResolver(UrlResolver):
         try:
             self._auto_update(self.get_setting('url'), OL_PATH, self.get_setting('key'))
             reload(ol_gmu)
-            return ol_gmu.get_media_url(self.get_url(host, media_id))  # @UndefinedVariable
+            video_url = ol_gmu.get_media_url(self.get_url(host, media_id))  # @UndefinedVariable
+            if video_url.endswith('?mime=true'):
+                video_url = video_url[:video_url.rfind('?')]
+            return video_url
         except Exception as e:
             logger.log_debug('Exception during openload resolve parse: %s' % (e))
             try:
@@ -56,8 +59,9 @@ class OpenLoadResolver(UrlResolver):
                     video_url = self.__auth_ip(media_id)
             except ResolverError:
                 raise
-            
             if video_url:
+                if video_url.endswith('?mime=true'):
+                    video_url = video_url[:video_url.rfind('?')]
                 return video_url
             else:
                 raise ResolverError(i18n('no_ol_auth'))
