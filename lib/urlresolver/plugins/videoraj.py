@@ -45,4 +45,4 @@ class VideoRajResolver(UrlResolver):
         return helpers.pick_source(sources)
 
     def get_url(self, host, media_id):
-        return 'http://www.videoraj.to/embed.php?id=%s' % media_id
+        return 'http://www.videoraj.to/embed.php?id=%s&playerPage=1&autoplay=1' % media_id

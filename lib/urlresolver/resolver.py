@@ -123,7 +123,7 @@ class UrlResolver(object):
         return True
 
     @classmethod
-    def get_settings_xml(cls):
+    def get_settings_xml(cls, include_login=True):
         '''
         This method should return XML which describes the settings you would
         like for your plugin. You should make sure that the ``id`` starts
@@ -141,6 +141,8 @@ class UrlResolver(object):
             '<setting id="%s_priority" type="number" label="%s" default="100"/>' % (cls.__name__, common.i18n('priority')),
             '<setting id="%s_enabled" ''type="bool" label="%s" default="true"/>' % (cls.__name__, common.i18n('enabled'))
         ]
+        if include_login:
+            xml.append('<setting id="%s_login" ''type="bool" label="%s" default="true" visible="false"/>' % (cls.__name__, common.i18n('login')))
         return xml
 
     @classmethod
@@ -196,7 +198,7 @@ class UrlResolver(object):
                             
                         if new_py and 'import' in new_py:
                             with open(py_path, 'w') as f:
-                                f.write(new_py)
+                                f.write(new_py.encode('utf-8'))
                             common.kodi.notify('%s %s' % (self.name, common.i18n('resolver_updated')))
                 else:
                     common.logger.log('Reusing existing %s: |%s|%s|%s|%s|' % (py_name, old_etag, new_etag, old_len, new_len))

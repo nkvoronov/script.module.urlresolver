@@ -125,11 +125,11 @@ class DebridLinkResolver(UrlResolver):
 
     @classmethod
     def get_settings_xml(cls):
-        xml = super(cls, cls).get_settings_xml()
+        xml = super(cls, cls).get_settings_xml(include_login=False)
         xml.append('<setting id="%s_login" type="bool" label="%s" default="false"/>' % (cls.__name__, i18n('login')))
         xml.append('<setting id="%s_username" enable="eq(-1,true)" type="text" label="%s" default=""/>' % (cls.__name__, i18n('username')))
         xml.append('<setting id="%s_password" enable="eq(-2,true)" type="text" label="%s" option="hidden" default=""/>' % (cls.__name__, i18n('password')))
-        xml.append('<setting id="%s_ts_offset" type="int" visible="false" enable="false"/>' % (cls.__name__))
+        xml.append('<setting id="%s_ts_offset" type="number" visible="false" enable="false" default="0"/>' % (cls.__name__))
         xml.append('<setting id="%s_token" type="text" visible="false" enable="false"/>' % (cls.__name__))
         xml.append('<setting id="%s_key" type="text" visible="false" enable="false"/>' % (cls.__name__))
         return xml

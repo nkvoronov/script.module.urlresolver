@@ -25,8 +25,8 @@ from urlresolver.resolver import UrlResolver, ResolverError
 
 class TheVideoResolver(UrlResolver):
     name = "thevideo"
-    domains = ["thevideo.me"]
-    pattern = '(?://|\.)(thevideo\.me)/(?:embed-|download/)?([0-9a-zA-Z]+)'
+    domains = ["thevideo.me", "tvad.me"]
+    pattern = '(?://|\.)((?:thevideo|tvad)\.me)/(?:embed-|download/)?([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
@@ -45,7 +45,7 @@ class TheVideoResolver(UrlResolver):
         header = i18n('thevideo_auth_header')
         line1 = i18n('auth_required')
         line2 = i18n('visit_link')
-        line3 = i18n('click_pair') % ('https://thevideo.me/pair')
+        line3 = i18n('click_pair') % ('https://tvad.me/pair')
         with common.kodi.CountdownDialog(header, line1, line2, line3) as cd:
             return cd.start(self.__check_auth, [media_id])
         
@@ -57,7 +57,7 @@ class TheVideoResolver(UrlResolver):
             raise ResolverError('Unusable Authorization Response')
         except urllib2.HTTPError as e:
             if e.code == 401:
-                js_result = json.loads(e.read())
+                js_result = json.loads(str(e.read()))
             else:
                 raise
             
@@ -68,4 +68,4 @@ class TheVideoResolver(UrlResolver):
             return {}
         
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
+        return self._default_get_url(host, media_id, template='https://tvad.me/embed-{media_id}.html')

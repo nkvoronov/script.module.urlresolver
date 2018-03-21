@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import re
 import json
 import urllib
 import urllib2
@@ -42,6 +43,9 @@ class VidUpMeResolver(UrlResolver):
         html = self.net.http_GET(web_url, headers=headers).content
         sources = helpers.parse_sources_list(html)
         if sources:
+            if len(sources) > 1:
+                try: sources.sort(key=lambda x: int(re.sub("\D", '', x[0])), reverse=True)
+                except: common.logger.log_debug('Scrape sources sort failed |int(re.sub(r"""\D""", '', x[0])|')
             try:
                 vt = self.__auth_ip(media_id)
                 if vt:

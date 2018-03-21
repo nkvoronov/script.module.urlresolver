@@ -37,7 +37,10 @@ class TunePkResolver(UrlResolver):
         html = response.content
         if 'Not Found' in html:
             raise ResolverError('File Removed')
-
+        
+        headers['Referer'] = web_url
+        cust_hdrs = json.loads(re.findall("headers':\s*([^\n]+),", html)[0])
+        headers.update(cust_hdrs)
         web_url = re.findall("requestURL = '(.*?)'", html)[0]
         response = self.net.http_GET(web_url, headers=headers)
         jdata = json.loads(response.content)
@@ -46,7 +49,7 @@ class TunePkResolver(UrlResolver):
         return helpers.pick_source(sources) + helpers.append_headers(headers)
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://betaembed.tune.pk/play/{media_id}')
+        return self._default_get_url(host, media_id, template='https://embed.tune.pk/play/{media_id}')
 
     @classmethod
     def get_settings_xml(cls):
