@@ -25,10 +25,10 @@ from lib import helpers
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class VidUpMeResolver(UrlResolver):
+class VidUpTVResolver(UrlResolver):
     name = "vidup.tv"
-    domains = ["vidup.tv"]
-    pattern = '(?://|\.)(vidup\.tv)/(?:embed-|download/)?([0-9a-zA-Z]+)'
+    domains = ["vidup.tv","vidup.me"]
+    pattern = '(?://|\.)(vidup\.tv|vidup\.me)/(?:embed-|download/)?([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
