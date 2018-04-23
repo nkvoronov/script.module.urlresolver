@@ -33,22 +33,14 @@ class TheVidResolver(UrlResolver):
         self.net = common.Net()
     
     def get_media_url(self, host, media_id):
-
-        web_url = self.get_url(host, media_id)
-        html = self.net.http_GET(web_url).content
-        match=re.compile('<script>(.+?)</script>',re.DOTALL).findall(html)
-        
-        for source in match:
-            source =source.strip()
-            try:
-
-                UNPACKED = jsunpack.unpack(source)
-                if 'sfilea' in UNPACKED:
-                    FINAL_URL = re.compile('sfilea="(.+?)"').findall(UNPACKED)[0]
-                    if not 'http' in FINAL_URL:
-                        FINAL_URL = 'http:'+ FINAL_URL
-                    return FINAL_URL
-            except:pass
+        try:
+            self._auto_update(VID_SOURCE, VID_PATH)
+            reload(thevid_gmu)
+            web_url = self.get_url(host, media_id)
+            return thevid_gmu.get_media_url(web_url)
+        except Exception as e:
+            logger.log_debug('Exception during thevid.net resolve parse: %s' % e)
+            raise
 
     def get_url(self, host, media_id):
         return self._default_get_url(host, media_id, template='http://{host}/e/{media_id}/')
