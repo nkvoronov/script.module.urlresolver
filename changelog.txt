@@ -1,3 +1,31 @@
+[B]Version 5.0.15 (May 27, 2018)[/B]
+- Code Base Changes:
+    - Changed Common Random User Agent Only Chrome Now
+    - IE getting locked by few resolvers
+- Resolvers Added:
+    - loadvid
+    - putvid
+    - gounlimited
+    - upfiles
+    - nxload
+- Resolvers Fixed/Updated:
+    - vidlox
+    - thevideo
+    - dailymotion
+    - premiumize
+    - flashx
+    - streamplay
+    - powvideo
+    - estream
+    - thevid
+    - vidup_me
+    - gorrilavid
+    - waaw
+- Resolvers Removed
+    - vidup_org
+- Languages Added/Updated
+	- None
+	
 [B]Version 5.0.15 (Apr 29, 2018)[/B]
 - Code Base Changes:
     - None
