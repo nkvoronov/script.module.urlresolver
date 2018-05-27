@@ -1,9 +1,6 @@
 """
-    OVERALL CREDIT TO:
-        t0mm0, Eldorado, VOINAGE, BSTRDMKR, tknorris, smokdpi, TheHighway
-
-    urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+    upfiles plugin for UrlResolver
+    Copyright (C) 2018 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,10 +17,8 @@
 """
 from __generic_resolver__ import GenericResolver
 
-class EstreamResolver(GenericResolver):
-    name = "estream"
-    domains = ['estream.to', 'estream.nu']
-    pattern = '(?://|\.)(estream\.(?:to|nu))/(?:embed-)?([a-zA-Z0-9]+)'
-    
-    def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://estream.nu/{media_id}.html')
+
+class UpFilesResolver(GenericResolver):
+    name = "upfiles"
+    domains = ['upfiles.pro']
+    pattern = '(?://|\.)(upfiles\.pro)/(?:embed-)?([0-9A-Za-z]+)'
