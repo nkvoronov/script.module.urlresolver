@@ -1,3 +1,21 @@
+[B]Version 5.0.17 (June 08, 2018)[/B]
+- Code Base Changes:
+    - Update User-Agents
+- Resolvers Added:
+	- videobug
+    - vidcloud
+- Resolvers Fixed/Updated:
+    - vidto
+    - thevideo
+    - premiumize
+    - streamango
+    - openload
+    - gamovideo
+- Resolvers Removed
+    - None
+- Languages Added/Updated
+    - None
+
 [B]Version 5.0.16 (May 27, 2018)[/B]
 - Code Base Changes:
     - Common user agent changed to Chrome only 
