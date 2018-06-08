@@ -2,7 +2,7 @@
 - Code Base Changes:
     - Update User-Agents
 - Resolvers Added:
-	- videobug
+    - videobug
     - vidcloud
 - Resolvers Fixed/Updated:
     - vidto
@@ -11,6 +11,7 @@
     - streamango
     - openload
     - gamovideo
+    - streamable
 - Resolvers Removed
     - None
 - Languages Added/Updated
