@@ -1,3 +1,15 @@
+[B]Version 5.0.18 (June 08, 2018)[/B]
+- Code Base Changes:
+    - None
+- Resolvers Added:
+    - None
+- Resolvers Fixed/Updated:
+    - None
+- Resolvers Removed
+    - loadvid
+- Languages Added/Updated
+    - None
+
 [B]Version 5.0.17 (June 08, 2018)[/B]
 - Code Base Changes:
     - Update User-Agents
