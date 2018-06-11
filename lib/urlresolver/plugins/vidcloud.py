@@ -1,6 +1,6 @@
-'''
-videobee urlresolver plugin
-Copyright (C) 2016 Gujal
+"""
+    urlresolver XBMC Addon
+    Copyright (C) 2016 jsergio
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,38 +14,32 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-'''
-import re
-from urlparse import urlparse
+"""
 from lib import helpers
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class VideoBeeResolver(UrlResolver):
-    name = "thevideobee.to"
-    domains = ["thevideobee.to"]
-    pattern = '(?://|\.)(thevideobee\.to)/(?:embed-)?([0-9A-Za-z]+)'
-    
+
+class VidCloudResolver(UrlResolver):
+    name = 'vidcloud'
+    domains = ['vidcloud.co', 'loadvid.online']
+    pattern = '(?://|\.)((?:vidcloud.co|loadvid.online))/(?:embed|v)/([0-9a-zA-Z]+)'
+
     def __init__(self):
         self.net = common.Net()
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.RAND_UA}
+        headers = {'User-Agent': common.CHROME_USER_AGENT, 'Referer': 'https://vidcloud.co/embed/%s' % media_id}
         html = self.net.http_GET(web_url, headers=headers).content
-        packed = helpers.get_packed_data(html)
-        
-        try:
-            sources = re.search("""sources:\s*\["(.+?)"\]""", packed).group(1).split('","')
-            sources = [(urlparse(sources[i]).path.split('/')[-1], sources[i]) for i in range(len(sources))]
-        except:
-            sources = helpers.scrape_sources(html, patterns=["""sources:\s*\[["'](?P<url>[^"']+)"""])
-        
-        if sources:
-            headers.update({'Referer': web_url})
-            return helpers.pick_source(sources) + helpers.append_headers(headers)
-        
-        raise ResolverError('File not found')
+
+        if html:
+            sources = helpers.scrape_sources(html.replace("\\n", "").replace("\\", ""), patterns=[
+                '''src":\s*"(?P<url>[^"]+)(?:[^}>\]]+)label":\s*"(?P<label>[^"]+)'''], generic_patterns=False)
+            if sources:
+                return helpers.pick_source(sources) + helpers.append_headers(headers)
+
+        raise ResolverError("Unable to locate video")
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
+        return self._default_get_url(host, media_id, template='https://vidcloud.co/player?fid={media_id}&page=embed')

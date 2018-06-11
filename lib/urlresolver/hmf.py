@@ -230,8 +230,6 @@ class HostedMediaFile:
 
         Intended to catch stream urls returned by resolvers that would fail to playback
         '''
-        if ('oload' in stream_url) or ('openload' in stream_url):
-            return True
         # parse_qsl doesn't work because it splits elements by ';' which can be in a non-quoted UA
         try: headers = dict([item.split('=') for item in (stream_url.split('|')[1]).split('&')])
         except: headers = {}

@@ -1,6 +1,6 @@
-# -*- coding: UTF-8 -*-
 """
-    Copyright (C) 2014  Lorka
+    upfiles plugin for UrlResolver
+    Copyright (C) 2018 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,16 +15,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from lib import helpers
-from urlresolver.resolver import UrlResolver
+from __generic_resolver__ import GenericResolver
 
-class UsersCloudResolver(UrlResolver):
-    name = "userscloud"
-    domains = ["userscloud.com"]
-    pattern = '(?://|\.)(userscloud\.com)/(?:embed-|embed/)?([0-9a-zA-Z/]+)'
 
-    def get_media_url(self, host, media_id):
-        return helpers.get_media_url(self.get_url(host, media_id), patterns=["""file:\s*['"](?P<url>[^'"]+)"""]).replace(' ', '%20')
-        
-    def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/{media_id}')
+class UpFilesResolver(GenericResolver):
+    name = "upfiles"
+    domains = ['upfiles.pro']
+    pattern = '(?://|\.)(upfiles\.pro)/(?:embed-)?([0-9A-Za-z]+)'
