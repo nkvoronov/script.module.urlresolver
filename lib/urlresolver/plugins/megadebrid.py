@@ -124,7 +124,7 @@ class MegaDebridResolver(UrlResolver):
 
     @classmethod
     def get_settings_xml(cls):
-        xml = super(cls, cls).get_settings_xml()
+        xml = super(cls, cls).get_settings_xml(include_login=False)
         xml.append('<setting id="%s_use_https" type="bool" label="%s" default="true"/>' % (cls.__name__, i18n('use_https')))
         xml.append('<setting id="%s_login" type="bool" label="%s" default="false"/>' % (cls.__name__, i18n('login')))
         xml.append('<setting id="%s_username" enable="eq(-1,true)" type="text" label="%s" default=""/>' % (cls.__name__, i18n('username')))

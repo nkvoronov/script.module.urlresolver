@@ -1,6 +1,5 @@
 """
-    urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0, JUL1EN094
+    urlresolver Kodi Addon
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,11 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os
 import re
 import urllib
+import urllib2
 import json
-from lib import helpers
 from urlresolver import common
 from urlresolver.common import i18n
 from urlresolver.resolver import UrlResolver, ResolverError
@@ -28,47 +26,44 @@ from urlresolver.resolver import UrlResolver, ResolverError
 logger = common.log_utils.Logger.get_logger(__name__)
 logger.disable()
 
+AGENT = 'URLResolver for Kodi'
+VERSION = common.addon_version
+USER_AGENT = '%s/%s' % (AGENT, VERSION)
+
+
 class AllDebridResolver(UrlResolver):
     name = "AllDebrid"
     domains = ['*']
-    profile_path = common.profile_path
-    cookie_file = os.path.join(profile_path, '%s.cookies' % name)
-    media_url = None
 
     def __init__(self):
-        self.hosts = None
         self.net = common.Net()
-        try:
-            os.makedirs(os.path.dirname(self.cookie_file))
-        except OSError:
-            pass
+        self.hosters = None
+        self.hosts = None
+        self.headers = {'User-Agent': USER_AGENT}
 
     def get_media_url(self, host, media_id):
-        source = None
-        logger.log('in get_media_url %s : %s' % (host, media_id))
-        url = 'http://www.alldebrid.com/service.php?link=%s' % (media_id)
-        html = self.net.http_GET(url).content
-        if html == 'login':
-            raise ResolverError('alldebrid: Authentication Error')
-    
-        try: js_data = json.loads(html)
-        except: js_data = {}
-        if js_data.get('error'):
-            raise ResolverError('alldebrid: %s' % (js_data['error']))
-        
-        if 'streaming' in js_data:
-            source = helpers.pick_source(js_data['streaming'].items())
-        elif 'link' in js_data:
-            source = js_data['link']
+        url = 'https://api.alldebrid.com/link/unlock?agent=%s&version=%s&token=%s&link=%s' % (urllib.quote_plus(AGENT), urllib.quote_plus(VERSION), self.get_setting('token'), media_id)
+        try:
+            result = self.net.http_GET(url, headers=self.headers).content
+        except urllib2.HTTPError as e:
+            try:
+                js_result = json.loads(e.read())
+                if 'error' in js_result:
+                    msg = '%s (%s)' % (js_result.get('error'), js_result.get('errorCode'))
+                else:
+                    msg = 'Unknown Error (1)'
+            except:
+                msg = 'Unknown Error (2)'
+            raise ResolverError('AllDebrid Error: %s (%s)' % (msg, e.code))
         else:
-            match = re.search('''class=["']link_dl['"][^>]+href=["']([^'"]+)''', html)
-            if match:
-                source = match.group(1)
-        
-        if source:
-            return source.encode('utf-8')
-        else:
-            raise ResolverError('alldebrid: no stream returned')
+            js_result = json.loads(result)
+            logger.log_debug('AllDebrid resolve: [%s]' % js_result)
+            if 'error' in js_result:
+                raise ResolverError('AllDebrid Error: %s (%s)' % (js_result.get('error'), js_result.get('errorCode')))
+            elif js_result.get('success', False):
+                if js_result.get('infos').get('link'):
+                    return js_result.get('infos').get('link')
+        raise ResolverError('AllDebrid: no stream returned')
 
     def get_url(self, host, media_id):
         return media_id
@@ -78,49 +73,120 @@ class AllDebridResolver(UrlResolver):
 
     @common.cache.cache_method(cache_limit=8)
     def get_all_hosters(self):
-        url = 'http://alldebrid.com/api.php?action=get_host'
-        html = self.net.http_GET(url).content
-        html = html.replace('"', '')
-        return html.split(',')
+        hosters = []
+        url = 'https://api.alldebrid.com/user/hosts?agent=%s&version=%s&token=%s' % (urllib.quote_plus(AGENT), urllib.quote_plus(VERSION), self.get_setting('token'))
+        try:
+            js_result = self.net.http_GET(url, headers=self.headers).content
+            js_data = json.loads(js_result)
+            if js_data.get('success', False):
+                regexes = [value.get('regexp').replace('\/', '/') for key, value in js_data.get('hosts', {}).iteritems()
+                           if value.get('status', False)]
+                logger.log_debug('AllDebrid hosters : %s' % regexes)
+                hosters = [re.compile(regex) for regex in regexes]
+            else:
+                logger.log_error('Error getting AD Hosters')
+        except Exception as e:
+            logger.log_error('Error getting AD Hosters: %s' % e)
+        return hosters
+
+    @common.cache.cache_method(cache_limit=8)
+    def get_hosts(self):
+        hosts = []
+        url = 'https://api.alldebrid.com/hosts/domains'
+        try:
+            js_result = self.net.http_GET(url, headers=self.headers).content
+            js_data = json.loads(js_result)
+            if js_data.get('success', False):
+                hosts = [host.replace('www.', '') for host in js_data.get('hosts', [])]
+                logger.log_debug('AllDebrid hosts : %s' % hosts)
+            else:
+                logger.log_error('Error getting AD Hosters')
+        except Exception as e:
+            logger.log_error('Error getting AD Hosts: %s' % e)
+        return hosts
 
     def valid_url(self, url, host):
-        if self.hosts is None:
-            self.hosts = self.get_all_hosters()
-            
         logger.log_debug('in valid_url %s : %s' % (url, host))
         if url:
-            match = re.search('//(.*?)/', url)
-            if match:
-                host = match.group(1)
-            else:
-                return False
+            if self.hosters is None:
+                self.hosters = self.get_all_hosters()
 
-        if host.startswith('www.'): host = host.replace('www.', '')
-        if host and any(host in item for item in self.hosts):
-            return True
+            for regexp in self.hosters:
+                # logger.log_debug('AllDebrid checking host : %s' %str(regexp))
+                if re.search(regexp, url):
+                    logger.log_debug('AllDebrid Match found')
+                    return True
+        elif host:
+            if self.hosts is None:
+                self.hosts = self.get_hosts()
+
+            if any(host in item for item in self.hosts):
+                return True
 
         return False
 
+    # SiteAuth methods
     def login(self):
-        username = self.get_setting('username')
-        password = self.get_setting('password')
-        login_data = urllib.urlencode({'action': 'login', 'login_login': username, 'login_password': password})
-        url = 'http://alldebrid.com/register/?%s' % (login_data)
-        html = self.net.http_GET(url).content
-        if '>Control panel<' in html:
-            self.net.save_cookies(self.cookie_file)
-            self.net.set_cookies(self.cookie_file)
-            return True
-        else:
+        if not self.get_setting('token'):
+            self.authorize_resolver()
+
+    def reset_authorization(self):
+        self.set_setting('token', '')
+
+    def authorize_resolver(self):
+        url = 'https://api.alldebrid.com/pin/get?agent=%s&version=%s' % (urllib.quote_plus(AGENT), urllib.quote_plus(VERSION))
+        js_result = self.net.http_GET(url, headers=self.headers).content
+        js_data = json.loads(js_result)
+        line1 = 'Go to URL: %s' % (js_data.get('base_url').replace('\/', '/'))
+        line2 = 'When prompted enter: %s' % (js_data.get('pin'))
+        with common.kodi.CountdownDialog('Url Resolver All Debrid Authorization', line1, line2,
+                                         countdown=js_data.get('expired_in', 120)) as cd:
+            result = cd.start(self.__check_auth, [js_data.get('check_url').replace('\/', '/')])
+
+        # cancelled
+        if result is None:
+            return
+        return self.__get_token(js_data.get('check_url').replace('\/', '/'))
+
+    def __get_token(self, url):
+        try:
+            js_result = self.net.http_GET(url, headers=self.headers).content
+            js_data = json.loads(js_result)
+            if js_data.get("success", False):
+                token = js_data.get('token', '')
+                logger.log_debug('Authorizing All Debrid Result: |%s|' % token)
+                self.set_setting('token', token)
+                return True
+        except Exception as e:
+            logger.log_debug('All Debrid Authorization Failed: %s' % e)
             return False
+
+    def __check_auth(self, url):
+        activated = False
+        try:
+            js_result = self.net.http_GET(url, headers=self.headers).content
+            js_data = json.loads(js_result)
+            if js_data.get("success", False):
+                activated = js_data.get('activated', False)
+        except Exception as e:
+            logger.log_debug('Exception during AD auth: %s' % e)
+        return activated
 
     @classmethod
     def get_settings_xml(cls):
         xml = super(cls, cls).get_settings_xml()
-        xml.append('<setting id="%s_login" type="bool" label="%s" default="false"/>' % (cls.__name__, i18n('login')))
-        xml.append('<setting id="%s_username" enable="eq(-1,true)" type="text" label="%s" default=""/>' % (cls.__name__, i18n('username')))
-        xml.append('<setting id="%s_password" enable="eq(-2,true)" type="text" label="%s" option="hidden" default=""/>' % (cls.__name__, i18n('password')))
+        xml.append(
+            '<setting id="%s_auth" type="action" label="%s" action="RunPlugin(plugin://script.module.urlresolver/?mode=auth_ad)"/>' % (
+                cls.__name__, i18n('auth_my_account')))
+        xml.append(
+            '<setting id="%s_reset" type="action" label="%s" action="RunPlugin(plugin://script.module.urlresolver/?mode=reset_ad)"/>' % (
+                cls.__name__, i18n('reset_my_auth')))
+        xml.append('<setting id="%s_token" visible="false" type="text" default=""/>' % cls.__name__)
         return xml
+
+    @classmethod
+    def _is_enabled(cls):
+        return cls.get_setting('enabled') == 'true' and cls.get_setting('token')
 
     @classmethod
     def isUniversal(self):

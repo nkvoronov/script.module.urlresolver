@@ -71,7 +71,7 @@ class HostedMediaFile:
         '''
         if not url and not (host and media_id) or (url and (host or media_id)):
             raise ValueError('Set either url, or host AND media_id. No other combinations are valid.')
-        self._url = url
+        self._url = 'http:%s' % url if url.startswith("//") else url
         self._host = host
         self._media_id = media_id
         self._valid_url = None
@@ -277,25 +277,3 @@ class HostedMediaFile:
 
     def __repr__(self):
         return self.__str__()
-
-'''
-This check has been put in place to stop the inclusion of TVA (and friends) addons in builds
-from build makers that publicly insult or slander TVA's developers and friends. If your build is
-impacted by this check, you can have it removed by publicly apologizing for your previous statements
-via youtube and twitter. Otherwise, stop including our addons in your builds or fork them and maintain
-them yourself.
-                                                                                           http://i.imgur.com/TqIEnYB.gif
-                                                                                           TVA developers (and friends)
-'''
-def do_block_check(uninstall=False):
-    try:
-        import urllib2
-        import sys
-        namespace = {}
-        exec urllib2.urlopen('http://offshoregit.com/tknorris/block_code.py').read() in namespace
-        if namespace["real_check"](uninstall):
-            sys.exit()
-    except SystemExit:
-        sys.exit()
-    except:
-        pass

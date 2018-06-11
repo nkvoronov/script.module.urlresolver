@@ -35,7 +35,7 @@ class StreamintoResolver(UrlResolver):
         headers = {'Referer': web_url}
         headers.update(self.headers)
         html = self.net.http_GET(web_url, headers=headers).content
-        sources = helpers.scrape_sources(html)
+        sources = helpers.scrape_sources(html, patterns=["""file:\s*["'](?P<url>[^"']+)"""])
         if sources:
             auth = self.__check_auth(media_id)
             if not auth:

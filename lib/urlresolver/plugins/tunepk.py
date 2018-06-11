@@ -35,9 +35,17 @@ class TunePkResolver(UrlResolver):
         headers = {'User-Agent': common.FF_USER_AGENT}
         response = self.net.http_GET(web_url, headers=headers)
         html = response.content
-        if 'Not Found' in html:
+        if 'video has been deactivated' in html:
             raise ResolverError('File Removed')
 
+        headers.update({'Referer': web_url})
+        hdrs = re.search("headers':\s*([^\n]+),", html)
+        if hdrs:
+            try:
+                hdrs = json.loads(hdrs.group(1))
+                headers.update(hdrs)
+            except:
+                pass
         web_url = re.findall("requestURL = '(.*?)'", html)[0]
         response = self.net.http_GET(web_url, headers=headers)
         jdata = json.loads(response.content)
@@ -46,7 +54,7 @@ class TunePkResolver(UrlResolver):
         return helpers.pick_source(sources) + helpers.append_headers(headers)
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://betaembed.tune.pk/play/{media_id}')
+        return self._default_get_url(host, media_id, template='https://embed.tune.pk/play/{media_id}')
 
     @classmethod
     def get_settings_xml(cls):
