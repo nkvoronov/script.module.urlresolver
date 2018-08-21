@@ -1,6 +1,6 @@
 """
     urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+    Copyright (C) 2018 jsergio
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,23 +20,34 @@ from lib import helpers
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class Mp4streamResolver(UrlResolver):
-    name = "mp4stream"
-    domains = ["mp4stream.com"]
-    pattern = '(?://|\.)(mp4stream\.com)/embed/([0-9a-zA-Z]+)'
+
+class UnitPlayResolver(UrlResolver):
+    name = "unitplay"
+    domains = ["unitplay.net"]
+    pattern = '(?://|\.)(unitplay\.net)/tt([0-9]+)'
 
     def __init__(self):
         self.net = common.Net()
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.EDGE_USER_AGENT, 'Referer': web_url}
+        headers = {'User-Agent': common.RAND_UA}
         html = self.net.http_GET(web_url, headers=headers).content
-        url = re.findall('src\s*:\s*\'(.+?)\'', html)
-        if url:
-            return url[-1] + helpers.append_headers(headers)
-        else:
-            raise ResolverError('File not found')
+        
+        if html:
+            player_id = re.search('''SvplayerID\|([a-z0-9]+)''', html, re.I)
+            if player_id:
+                player_url = 'https://unitplay.net//CallPlayer'
+                data = {'id': player_id.group(1)}
+                headers.update({'Referer': web_url})
+                _html = self.net.http_POST(player_url, data, headers=headers).content
+                if _html:
+                    _html = _html.decode("hex")
+                    sources = helpers.scrape_sources(_html)
+                    if sources:
+                        return helpers.pick_source(sources) + helpers.append_headers(headers)
+                
+        raise ResolverError("Unable to locate video")
 
     def get_url(self, host, media_id):
-        return 'http://mp4stream.com/embed/%s' % media_id
+        return self._default_get_url(host, media_id, template='https://{host}/tt{media_id}')
