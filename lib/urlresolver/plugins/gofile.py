@@ -15,28 +15,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import re
+
+from __generic_resolver__ import GenericResolver
 from lib import helpers
-from urlresolver import common
-from urlresolver.resolver import UrlResolver, ResolverError
 
-class Mp4streamResolver(UrlResolver):
-    name = "mp4stream"
-    domains = ["mp4stream.com"]
-    pattern = '(?://|\.)(mp4stream\.com)/embed/([0-9a-zA-Z]+)'
-
-    def __init__(self):
-        self.net = common.Net()
+class GofileResolver(GenericResolver):
+    name = "gofile"
+    domains = ["gofile.io"]
+    pattern = '(?://|\.)(gofile\.io)/\?c=([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
-        web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.EDGE_USER_AGENT, 'Referer': web_url}
-        html = self.net.http_GET(web_url, headers=headers).content
-        url = re.findall('src\s*:\s*\'(.+?)\'', html)
-        if url:
-            return url[-1] + helpers.append_headers(headers)
-        else:
-            raise ResolverError('File not found')
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=['''<a\s+id=\"downloadLink(?:[0-9]+)\"\s+href=\"(?P<url>https://[^\.\"']+\.gofile\.io/download/(?:[^\"']+))\"\s+download'''], generic_patterns=False).replace(' ', '%20')
 
     def get_url(self, host, media_id):
-        return 'http://mp4stream.com/embed/%s' % media_id
+        return 'https://gofile.io/?c=%s' % (media_id)
