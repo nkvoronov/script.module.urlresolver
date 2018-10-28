@@ -1,6 +1,6 @@
 """
-thevid.net urlresolver plugin
-Copyright (C) 2015 tknorris
+urlresolver plugin
+Copyright (c) 2018 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,11 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from lib import helpers
-from urlresolver import common
+from __generic_resolver__ import GenericResolver
 
-logger = common.log_utils.Logger.get_logger(__name__)
-logger.disable()
-
-def get_media_url(url):
-    return helpers.get_media_url(url, patterns=['''var [a-z0-9]*file[a-z0-9]=\s*["'](?P<url>//[^"']+\.(?:mp4|m3u8)\?[^"']+)'''], generic_patterns=False).replace(' ', '%20')
+class VidorgResolver(GenericResolver):
+    name = 'vidorg.net'
+    domains = ['vidorg.net']
+    pattern = '(?://|\.)(vidorg\.net)/(?:embed[/-])?([0-9A-Za-z]+)'

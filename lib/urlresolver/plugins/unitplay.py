@@ -1,9 +1,6 @@
 """
-    OVERALL CREDIT TO:
-        t0mm0, Eldorado, VOINAGE, BSTRDMKR, tknorris, smokdpi, TheHighway
-
     urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+    Copyright (C) 2018 jsergio
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,10 +21,10 @@ from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class NxloadResolver(UrlResolver):
-    name = "nxload"
-    domains = ["nxload.com"]
-    pattern = '(?://|\.)(nxload\.com)/(?:embed-)?([0-9a-zA-Z]+)'
+class UnitPlayResolver(UrlResolver):
+    name = "unitplay"
+    domains = ["unitplay.net"]
+    pattern = '(?://|\.)(unitplay\.net)/tt([0-9]+)'
 
     def __init__(self):
         self.net = common.Net()
@@ -36,15 +33,21 @@ class NxloadResolver(UrlResolver):
         web_url = self.get_url(host, media_id)
         headers = {'User-Agent': common.RAND_UA}
         html = self.net.http_GET(web_url, headers=headers).content
-
+        
         if html:
-            match = re.search('''['"]?sources['"]?\s*:\s*\[(.*?)\]''', html, re.DOTALL)
-            if match:
-                sources = [(source.rsplit('/', 1).pop(1), source) for source in
-                           re.findall('''['"](.*?)["']''', match.group(1), re.DOTALL)]
-                return helpers.pick_source(sources) + helpers.append_headers(headers)
-
-        raise ResolverError("Video not found")
+            player_id = re.search('''SvplayerID\|([a-z0-9]+)''', html, re.I)
+            if player_id:
+                player_url = 'https://unitplay.net//CallPlayer'
+                data = {'id': player_id.group(1)}
+                headers.update({'Referer': web_url})
+                _html = self.net.http_POST(player_url, data, headers=headers).content
+                if _html:
+                    _html = _html.decode("hex")
+                    sources = helpers.scrape_sources(_html)
+                    if sources:
+                        return helpers.pick_source(sources) + helpers.append_headers(headers)
+                
+        raise ResolverError("Unable to locate video")
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
+        return self._default_get_url(host, media_id, template='https://{host}/tt{media_id}')

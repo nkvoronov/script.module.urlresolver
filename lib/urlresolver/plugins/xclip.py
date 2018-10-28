@@ -1,5 +1,5 @@
-"""
-    putvid plugin for URLResolver
+'''
+    Plugin for URLResolver
     Copyright (C) 2018 gujal
 
     This program is free software: you can redistribute it and/or modify
@@ -14,29 +14,18 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-from urlresolver import common
+'''
+
 from urlresolver.resolver import UrlResolver, ResolverError
 from lib import helpers
 
-class PutVidResolver(UrlResolver):
-    name = "putvid"
-    domains = ['putvid.com']
-    pattern = '(?://|\.)(putvid\.com)/(?:embed-)?([0-9a-zA-Z]+)'
-
-    def __init__(self):
-        self.net = common.Net()
-    
-    def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
+class xClipResolver(UrlResolver):
+    name = "xclip"
+    domains = ['xclip.to']
+    pattern = '(?://|\.)(xclip\.to)/([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
-        web_url = self.get_url(host, media_id)
-        html = self.net.http_GET(web_url).content
-        if html:
-            sources = helpers.scrape_sources(html, patterns=['''sources:[^"]+"(?P<url>[^"]+)'''], generic_patterns=False)
-            if sources:
-                source = helpers.pick_source(sources)
-                return source
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=['''file:\s*"(?P<url>[^"]+)",\n?\s*label:\s*"(?P<label>[^"]+)'''])
 
-        raise ResolverError('File not found')
+    def get_url(self, host, media_id):
+        return self._default_get_url(host, media_id, template='https://{host}/{media_id}.html')

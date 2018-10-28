@@ -1,6 +1,6 @@
 """
-thevid.net urlresolver plugin
-Copyright (C) 2015 tknorris
+myupload urlresolver plugin
+Copyright (C) 2018 Resolveurl
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,11 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from lib import helpers
-from urlresolver import common
+from __generic_resolver__ import GenericResolver
 
-logger = common.log_utils.Logger.get_logger(__name__)
-logger.disable()
-
-def get_media_url(url):
-    return helpers.get_media_url(url, patterns=['''var [a-z0-9]*file[a-z0-9]=\s*["'](?P<url>//[^"']+\.(?:mp4|m3u8)\?[^"']+)'''], generic_patterns=False).replace(' ', '%20')
+class myUpload(GenericResolver):
+    name = "myupload"
+    domains = ["myupload.co"]
+    pattern = '(?://|\.)(myupload\.co)/plugins/mediaplayer/site/_embed.php\?u=([0-9a-zA-Z]+)'
+    
+    def get_url(self, host, media_id):
+        return self._default_get_url(host, media_id, 'https://{host}/plugins/mediaplayer/site/_embed.php?u={media_id}')
