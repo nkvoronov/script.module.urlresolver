@@ -1,6 +1,6 @@
 '''
-urlresolver XBMC Addon
-Copyright (C) 2013 Bstrdsmkr
+Plugin for URLResolver
+Copyright (C) 2018 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,38 +15,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
+
 import re
 from lib import helpers
+from lib import jsunpack
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-
-class PromptfileResolver(UrlResolver):
-    name = "promptfile"
-    domains = ["promptfile.com"]
-    pattern = '(?://|\.)(promptfile\.com)/(?:l|e)/([0-9A-Za-z\-]+)'
+class IRShareResolver(UrlResolver):
+    name = "irshare"
+    domains = ["irshare.net"]
+    pattern = '(?://|\.)(irshare\.net)/embed/([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.FF_USER_AGENT}
+        headers = {'User-Agent': common.RAND_UA,
+                   'Referer': web_url}
         html = self.net.http_GET(web_url, headers=headers).content
-        match = re.search('''val\(['"]([^"']+)''', html)
-        prefix = match.group(1) if match else ''
-        data = helpers.get_hidden(html)
-        for name in data:
-            data[name] = prefix + data[name]
 
-        headers['Referer'] = web_url
-        html = self.net.http_POST(web_url, form_data=data, headers=headers).content
-        match = re.search('''clip\s*:\s*\{.*?(?:url|src)\s*:\s*["'](?P<url>[^"']+)["']''', html, re.DOTALL)
-        if not match:
-            raise ResolverError('File Not Found or removed')
+        r = re.search('JuicyCodes\.Run\("([^)]+)"\)', html)
+        
+        if r:
+            jc = r.group(1).replace('"+"', '').decode('base64')
+            jc = jsunpack.unpack(jc)
+            sources = helpers.scrape_sources(jc)
+            headers.update({'Range': 'bytes=0-'})
+            return helpers.pick_source(sources) + helpers.append_headers(headers)
 
-        source = self.net.http_GET(match.group('url'), headers=headers).get_url()
-        return source + helpers.append_headers(headers)
+        raise ResolverError('Video cannot be located.')
 
     def get_url(self, host, media_id):
-        return 'http://www.promptfile.com/l/%s' % (media_id)
+        return self._default_get_url(host, media_id, template='https://{host}/embed/{media_id}/')

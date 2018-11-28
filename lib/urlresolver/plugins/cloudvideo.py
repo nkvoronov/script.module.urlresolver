@@ -21,10 +21,6 @@
 from __generic_resolver__ import GenericResolver
 
 
-class FileBeboResolver(GenericResolver):
-    name = 'filebebo'
-    domains = ['filebebo.com']
-    pattern = '(?://|\.)(filebebo\.com)/(?:e/|d/)?([a-zA-Z0-9]{12})'
-
-    def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
+class CloudVideoResolver(GenericResolver):
+    name = 'cloudvideo'
+    domains = ['cloudvideo.tv']
