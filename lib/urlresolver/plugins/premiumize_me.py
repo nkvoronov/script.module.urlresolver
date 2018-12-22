@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import xbmc
 import re
 import urllib
 import json
@@ -196,11 +195,11 @@ class PremiumizeMeResolver(UrlResolver):
         transfer_info = self.__list_transfer(transfer_id)
         if transfer_info:
             line1 = transfer_info.get('name')
-            line2 = 'Saving item to the Premiumize Cloud'
+            line2 = 'Saving torrent to the Premiumize Cloud'
             line3 = transfer_info.get('message')
             with common.kodi.ProgressDialog('URL Resolver Premiumize Transfer', line1, line2, line3) as pd:
                 while not transfer_info.get('status') == 'seeding':
-                    xbmc.sleep(1000 * interval)
+                    common.kodi.sleep(1000 * interval)
                     transfer_info = self.__list_transfer(transfer_id)
                     line3 = transfer_info.get('message')
                     logger.log_debug(line3)
@@ -213,7 +212,7 @@ class PremiumizeMeResolver(UrlResolver):
                         self.__delete_transfer(transfer_id)
                         # self.__delete_folder()
                         raise ResolverError('Transfer ID %s has stalled' % transfer_id)
-            xbmc.sleep(1000 * interval)  # allow api time to generate the stream_link
+            common.kodi.sleep(1000 * interval)  # allow api time to generate the stream_link
         self.__delete_transfer(transfer_id)  # just in case __clear_finished() doesnt work
 
         return
