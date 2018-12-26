@@ -58,13 +58,12 @@ class RealDebridResolver(UrlResolver):
         self.hosters = None
         self.hosts = None
         self.headers = {'User-Agent': USER_AGENT}
-        self.torrent = False
 
     def get_media_url(self, host, media_id, retry=False):
         try:
             headers = self.headers
             headers.update({'Authorization': 'Bearer %s' % self.get_setting('token')})
-            if self.torrent:
+            if media_id.lower().startswith('magnet:'):
                 cached = self.__check_cache(media_id, headers)  # useless
                 torrent_id = self.__add_magnet(media_id, headers)
                 if not torrent_id == "":
@@ -78,7 +77,7 @@ class RealDebridResolver(UrlResolver):
                         _TIMEOUT = 100  # seconds
                         with common.kodi.ProgressDialog(heading, line1, line2, line3) as cd:
                             while status == 'magnet_conversion' and _TIMEOUT > 0:
-                                cd.update(_TIMEOUT, line3=line3)
+                                cd.update(_TIMEOUT, line1=line1, line3=line3)
                                 if cd.is_canceled():
                                     self.__delete_torrent(torrent_id, headers)
                                     raise ResolverError('Real-Debrid: Torrent ID %s canceled by user' % torrent_id)
@@ -89,6 +88,7 @@ class RealDebridResolver(UrlResolver):
                                 common.kodi.sleep(1000 * INTERVALS)
                                 torrent_info = self.__torrent_info(torrent_id, headers)
                                 status = torrent_info.get('status')
+                                line1 = torrent_info.get('filename')
                                 line3 = '%s seeders' % torrent_info.get('seeders')
                         if status == 'magnet_conversion':
                             self.__delete_torrent(torrent_id, headers)
@@ -117,13 +117,14 @@ class RealDebridResolver(UrlResolver):
                                     while not status == 'downloaded':
                                         common.kodi.sleep(1000 * INTERVALS)
                                         torrent_info = self.__torrent_info(torrent_id, headers)
+                                        line1 = torrent_info.get('filename')
                                         status = torrent_info.get('status')
                                         if status == 'downloading':
                                             line3 = 'Downloading %s GB @ %s mbps from %s peers, %s %% completed' % (file_size, round(float(torrent_info.get('speed')) / (1000**2), 2), torrent_info.get("seeders"), torrent_info.get('progress'))
                                         else:
                                             line3 = status
                                         logger.log_debug(line3)
-                                        pd.update(int(float(torrent_info.get('progress'))), line3=line3)
+                                        pd.update(int(float(torrent_info.get('progress'))), line1=line1, line3=line3)
                                         if pd.is_canceled():
                                             self.__delete_torrent(torrent_id, headers)
                                             raise ResolverError('Real-Debrid: Torrent ID %s canceled by user' % torrent_id)
@@ -133,7 +134,7 @@ class RealDebridResolver(UrlResolver):
                             # xbmc.sleep(1000 * INTERVALS)  # allow api time to generate the stream_link
                             media_id = torrent_info.get('links')[0]
                     self.__delete_torrent(torrent_id, headers)
-                if media_id.startswith('magnet:'):
+                if media_id.lower().startswith('magnet:'):
                     self.__delete_torrent(torrent_id, headers)  # clean up just incase
                     raise ResolverError('Real-Debrid Error: Failed to transfer torrent to/from the cloud')
 
@@ -340,8 +341,7 @@ class RealDebridResolver(UrlResolver):
     def valid_url(self, url, host):
         logger.log_debug('in valid_url %s : %s' % (url, host))
         if url:
-            if url.startswith('magnet:') and self.get_setting('torrents') == 'true':
-                self.torrent = True
+            if url.lower().startswith('magnet:') and self.get_setting('torrents') == 'true':
                 return True
             if self.hosters is None:
                 self.hosters = self.get_all_hosters()
