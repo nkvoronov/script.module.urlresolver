@@ -1,9 +1,6 @@
 """
-    OVERALL CREDIT TO:
-        t0mm0, Eldorado, VOINAGE, BSTRDMKR, tknorris, smokdpi, TheHighway
-
-    urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+    UrlResolver site plugin
+    Copyright (C) 2018 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,11 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __generic_resolver__ import GenericResolver
+from lib import helpers
 
-class dbMoviesResolver(GenericResolver):
-    name = "dbmovies"
-    domains = ['dbmovies.xyz']
-    pattern = '(?://|\.)(dbmovies\.xyz)/([\w-]+)'
+class SuperITUResolver(GenericResolver):
+    name = 'superitu.com'
+    domains = ['superitu.com']
+    pattern = '(?://|\.)(superitu\.com)/embed/redirector\.php\?id=([0-9a-zA-Z=]+)'
 
+    def get_media_url(self, host, media_id):
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=['''file:\s*['"](?P<url>[^'"]+)'''])
+        
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/{media_id}')
+        return self._default_get_url(host, media_id, 'http://%s/embed/redirector.php?id=%s' % (host, media_id))
