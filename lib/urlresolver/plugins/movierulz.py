@@ -1,6 +1,6 @@
-'''
-divxstage urlresolver plugin
-Copyright (C) 2011 t0mm0, DragonWin
+"""
+urlresolver site plugin
+Copyright (C) 2018 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,13 +14,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 from __generic_resolver__ import GenericResolver
 
-class DivxstageResolver(GenericResolver):
-    name = 'divxstage'
-    domains = ['divxstage.eu', 'divxstage.net', 'divxstage.to', 'cloudtime.to']
-    pattern = '(?://|\.)(divxstage.eu|divxstage.net|divxstage.to|cloudtime.to)/(?:video/|embed/\?v=)([A-Za-z0-9]+)'
-
+class MovieRulzResolver(GenericResolver):
+    name = "movierulz.pro"
+    domains = ["movierulz.pro"]
+    pattern = '(?://|\.)(movierulz\.pro)/(?:embed-)?([0-9a-zA-Z-]+)'
+    
     def get_url(self, host, media_id):
-        return 'http://www.cloudtime.to/embed/?v=%s' % media_id
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')
