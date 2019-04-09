@@ -23,8 +23,8 @@ from __generic_resolver__ import GenericResolver
 
 class HxloadResolver(GenericResolver):
     name = "hxload"
-    domains = ['hxload.co']
-    pattern = '(?://|\.)(hxload.co)/(?:\?e\=|embed/)([0-9a-zA-Z]+)'
+    domains = ['hxload.co', 'hxload.io']
+    pattern = '(?://|\.)(hxload.(?:co|io))/(?:\?e\=|embed/)([0-9a-zA-Z]+)'
 
     def get_url(self, host, media_id):
         return self._default_get_url(host, media_id, template='https://{host}/embed/{media_id}')
