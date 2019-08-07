@@ -224,3 +224,27 @@ msgstr "Premiumize авторизация сброшена"
 msgctxt "#33052"
 msgid "Premiumize Resolver Authorized"
 msgstr "Premiumize резолвер авторизирован"
+
+msgctxt "#33053"
+msgid "Linksnappy Authorization Reset"
+msgstr "Linksnappy авторизация сброшена"
+
+msgctxt "#33054"
+msgid "Linksnappy Resolver Authorized"
+msgstr "Linksnappy резолвер авторизирован"
+
+msgctxt "#33055"
+msgid "Download rate:"
+msgstr "Скорость скачивания:"
+
+msgctxt "#33056"
+msgid "Peers:"
+msgstr "Пиры:"
+
+msgctxt "#33057"
+msgid "seconds"
+msgstr "секунд"
+
+msgctxt "#33058"
+msgid "Cached filehosts only"
+msgstr "Кэшировать только файловые хосты"
