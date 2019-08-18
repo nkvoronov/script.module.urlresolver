@@ -1,6 +1,6 @@
-"""
-grifthost urlresolver plugin
-Copyright (C) 2015 tknorris
+'''
+vup urlresolver plugin
+Copyright (C) 2019 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,19 +14,17 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
-
+'''
 from lib import helpers
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class GrifthostResolver(UrlResolver):
-    name = "grifthost"
-    domains = ["grifthost.com"]
-    pattern = '(?://|\.)(grifthost\.com)/(?:embed-)?([0-9a-zA-Z/]+)'
-    
+class VuptoResolver(UrlResolver):
+    name = "vup"
+    domains = ["vup.to"]
+    pattern = r'(?://|\.)(vup\.to)/(?:embed-)?([0-9a-zA-Z]+)'
+
     def get_media_url(self, host, media_id):
-        return helpers.get_media_url(self.get_url(host, media_id), patterns=['''file:\s*['"](?P<url>[^'"]+)''']).replace(' ', '%20')
-        
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=[r'''sources:\s*\[{src:\s*"(?P<url>[^"]+)'''])
+
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
-    
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')
