@@ -1,6 +1,6 @@
-'''
-    urlresolver XBMC Addon
-    Copyright (C) 2016 Gujal
+"""
+sendvid UrlResolver plugin
+Copyright (C) 2019 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,17 +14,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-'''
-from lib import helpers
-from urlresolver.resolver import UrlResolver, ResolverError
+"""
 
-class HDvidResolver(UrlResolver):
-    name = 'HDvid'
-    domains = ['hdvid.tv']
-    pattern = '(?://|\.)(hdvid\.tv)/(?:embed-)?([0-9a-zA-Z]+)'
-    
+from __generic_resolver__ import GenericResolver
+from lib import helpers
+
+class SendVidResolver(GenericResolver):
+    name = "sendvid.com"
+    domains = ['sendvid.com']
+    pattern = r'(?://|\.)(sendvid\.com)/([0-9a-zA-Z]+)'
+
     def get_media_url(self, host, media_id):
-        return helpers.get_media_url(self.get_url(host, media_id), patterns=['''file:\s*["'](?P<url>[^"']+)''']).replace(' ', '%20')
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=[r'''source\s*src="(?P<url>[^"]+)'''])
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
+        return self._default_get_url(host, media_id, template='https://{host}/{media_id}')
