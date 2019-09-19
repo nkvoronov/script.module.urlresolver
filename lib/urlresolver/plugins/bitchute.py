@@ -1,9 +1,7 @@
 """
-    OVERALL CREDIT TO:
-        t0mm0, Eldorado, VOINAGE, BSTRDMKR, tknorris, smokdpi, TheHighway
-
-    urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+    URLResolver Kodi module
+    Bitchute plugin
+    Copyright (C) 2019 twilight0
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,16 +16,33 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from __generic_resolver__ import GenericResolver
-from lib import helpers
 
-class VidwatchResolver(GenericResolver):
-    name = "vidwatch.me"
-    domains = ['vidwatch3.me', 'vidwatch4.me', 'vidwatch.me']
-    pattern = r'(?://|\.)(vidwatch\d*\.me)/(?:embed-)?([a-zA-Z0-9]+)'
+from __generic_resolver__ import UrlResolver
+from lib import helpers
+from urlresolver import common
+
+
+class BitchuteResolver(UrlResolver):
+
+    name = "bitchute.com"
+    domains = ['bitchute.com']
+    pattern = r'(?://|\.)(bitchute\.com)/(?:video|embed)/([\w-]+)/'
+
+    def __init__(self):
+
+        self.net = common.Net()
 
     def get_media_url(self, host, media_id):
-        return helpers.get_media_url(self.get_url(host, media_id), patterns=[r'''file:\s*['"](?P<url>[^'"]+)'''])
+
+        web_url = self.get_url(host, media_id)
+        response = self.net.http_GET(web_url)
+
+        sources = helpers.scrape_sources(
+            response.content, patterns=[r'''source src=['"](?P<url>https.+?\.mp4)['"] type="video/mp4''']
+        )
+
+        return helpers.pick_source(sources)
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://vidwatch.me/embed-{media_id}.html')
+
+        return self._default_get_url(host, media_id, 'https://www.{host}/video/{media_id}')
