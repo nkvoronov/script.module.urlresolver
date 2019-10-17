@@ -1,4 +1,4 @@
-[B]Version 5.0.40 (October 17, 2019)[/B]
+[B]Version 5.0.41 (October 17, 2019)[/B]
 - Code Base Changes:
     - hmf fix
 - Resolvers Added:
