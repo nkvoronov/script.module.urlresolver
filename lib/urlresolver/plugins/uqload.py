@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-     
-    Copyright (C) 2016
+    Plugin for URLResolver
+    Copyright (C) 2019 gujal
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,11 +17,15 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from __generic_resolver__ import GenericResolver
+from lib import helpers
 
-class VidnodeResolver(GenericResolver):
-    name = 'vidnode'
-    domains = ['vidnode.net']
-    pattern = '(?://|\.)(vidnode\.net)/(?:streaming\.php\?id=)?([0-9a-zA-Z]+)'
+class UQloadResolver(GenericResolver):
+    name = 'uqload'
+    domains = ['uqload.com']
+    pattern = r'(?://|\.)(uqload\.com)/(?:embed-)?([0-9a-zA-Z]+)'
+
+    def get_media_url(self, host, media_id):
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=[r'''sources:\s*[['"]+(?P<url>[^'"]+)'''])
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, 'http://{host}/streaming.php?id={media_id}')
+        return self._default_get_url(host, media_id, 'https://{host}/embed-{media_id}.html')

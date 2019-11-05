@@ -1,6 +1,6 @@
 '''
-    urlresolver XBMC Addon
-    Copyright (C) 2016 Gujal
+SpeedWatch.io urlresolver plugin
+Copyright (C) 2019 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,16 +15,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
+
+import re
 from lib import helpers
+from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class HDvidResolver(UrlResolver):
-    name = 'HDvid'
-    domains = ['hdvid.tv']
-    pattern = '(?://|\.)(hdvid\.tv)/(?:embed-)?([0-9a-zA-Z]+)'
-    
+class SpeedWatchResolver(UrlResolver):
+    name = "speedwatch"
+    domains = ["speedwatch.io"]
+    pattern = r'(?://|\.)(speedwatch\.io)/(?:plyr|e)/([0-9a-zA-Z]+)'
+
+    def __init__(self):
+        self.net = common.Net()
+
     def get_media_url(self, host, media_id):
-        return helpers.get_media_url(self.get_url(host, media_id), patterns=['''file:\s*["'](?P<url>[^"']+)''']).replace(' ', '%20')
+        return helpers.get_media_url(self.get_url(host, media_id), patterns=[r'''sources\s*:\s*\["(?P<url>[^"]+)'''], generic_patterns=False)
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id)
+        return self._default_get_url(host, media_id, template='https://www.{host}/e/{media_id}.html')
