@@ -1,6 +1,6 @@
 """
     URLResolver Kodi module
-    Bitchute plugin
+    VlareTV plugin
     Copyright (C) 2019 twilight0
 
     This program is free software: you can redistribute it and/or modify
@@ -17,16 +17,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __generic_resolver__ import UrlResolver
+import re
+from urlresolver.resolver import UrlResolver
 from lib import helpers
 from urlresolver import common
 
 
-class BitchuteResolver(UrlResolver):
+class VlareTVResolver(UrlResolver):
 
-    name = "bitchute.com"
-    domains = ['bitchute.com']
-    pattern = r'(?://|\.)(bitchute\.com)/(?:video|embed)/([\w-]+)/'
+    name = "vlare.tv"
+    domains = ['vlare.tv']
+    pattern = r'(?://|\.)(vlare\.tv)/(?:v|embed)/([\w-]+)(?:/(?:false|true)/(?:false|true)/\d+?)?'
 
     def __init__(self):
 
@@ -36,11 +37,14 @@ class BitchuteResolver(UrlResolver):
     def get_media_url(self, host, media_id):
 
         web_url = self.get_url(host, media_id)
-        response = self.net.http_GET(web_url, headers=self.headers)
+        res = self.net.http_GET(web_url, headers=self.headers)
 
-        sources = helpers.scrape_sources(
-            response.content, patterns=[r'''source src=['"](?P<url>https.+?\.mp4)['"] type=['"]video/mp4['"]''']
+        sources = re.findall(
+            '''["']file["']:["'](?P<url>https?.+?\.mp4)["'],["']label["']:["'](\d{3,4}p)["']''',
+            res.content
         )
+
+        sources = [(s[1], s[0]) for s in sources]
 
         self.headers.update({'Referer': web_url})
 
@@ -48,4 +52,4 @@ class BitchuteResolver(UrlResolver):
 
     def get_url(self, host, media_id):
 
-        return self._default_get_url(host, media_id, 'https://www.{host}/video/{media_id}')
+        return self._default_get_url(host, media_id, 'https://{host}/embed/{media_id}')
