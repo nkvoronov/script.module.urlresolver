@@ -1,3 +1,18 @@
+[B]Version 5.0.43 (November 10, 2019)[/B]
+- Code Base Changes:
+    - none
+- Resolvers Added:
+    - mixdrop
+- Resolvers Fixed/Updated:
+    - clipwatching
+    - fembed
+    - gounlimited
+    - vidup
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
 [B]Version 5.0.42 (November 1, 2019)[/B]
 - Code Base Changes:
     - hmf improvement
