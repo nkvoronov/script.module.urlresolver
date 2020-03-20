@@ -5,6 +5,7 @@
     - pkspeed
     - streamwire
 - Resolvers Fixed/Updated:
+    - entervideo
     - mystream
     - streamz
     - waaw
