@@ -1,5 +1,6 @@
 """
-    Copyright (C) 2014  smokdpi
+    plugin for URLResolver
+    Copyright (C) 2020 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,14 +15,35 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import re
+import json
+from lib import helpers
+from urlresolver import common
+from urlresolver.resolver import UrlResolver, ResolverError
 
-from __generic_resolver__ import GenericResolver
 
-
-class UpToBoxResolver(GenericResolver):
+class UpToBoxResolver(UrlResolver):
     name = "uptobox"
     domains = ["uptobox.com", "uptostream.com"]
-    pattern = '(?://|\.)(uptobox.com|uptostream.com)/(?:iframe/)?([0-9A-Za-z_]+)'
+    pattern = r'(?://|\.)(uptobox.com|uptostream.com)/(?:iframe/)?([0-9A-Za-z_]+)'
+
+    def __init__(self):
+        self.net = common.Net()
+
+    def get_media_url(self, host, media_id):
+        web_url = self.get_url(host, media_id)
+        headers = {'User-Agent': common.FF_USER_AGENT}
+        html = self.net.http_GET(web_url, headers=headers).content
+
+        if 'Not Found' in html:
+            raise ResolverError('File Removed')
+
+        packed = re.search(r"atob\('([^']+)", html)
+        if packed:
+            vidurl = json.loads(packed.group(1).decode('base64'))[0].get('src')
+            return vidurl + helpers.append_headers(headers)
+
+        raise ResolverError('Video not found')
 
     def get_url(self, host, media_id):
         return self._default_get_url(host, media_id, template='https://uptostream.com/iframe/{media_id}')
