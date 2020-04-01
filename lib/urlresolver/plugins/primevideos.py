@@ -1,6 +1,6 @@
 """
     Plugin for UrlResolver
-    Copyright (C) 2019 gujal
+    Copyright (C) 2020 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,12 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __generic_resolver__ import GenericResolver
+from lib import helpers
 
 
-class ClipWatchingResolver(GenericResolver):
-    name = "clipwatching"
-    domains = ['clipwatching.com']
-    pattern = r'(?://|\.)(clipwatching\.com)/(?:embed-)?(\w+)'
+class PrimeVideosResolver(GenericResolver):
+    name = "primevideos"
+    domains = ['primevideos.net']
+    pattern = r'(?://|\.)(primevideos\.net)/files/([0-9a-zA-Z]+)'
+
+    def get_media_url(self, host, media_id):
+        return helpers.get_media_url(self.get_url(host, media_id),
+                                     patterns=[r'''source:\s*"(?P<url>[^"]+)'''],
+                                     generic_patterns=False)
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')
+        return self._default_get_url(host, media_id, template='http://vdl.{host}/secure/{media_id}.html')
