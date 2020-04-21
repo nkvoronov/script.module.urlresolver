@@ -1,3 +1,184 @@
+[B]Version 5.0.62 (Apr 13, 2020)[/B]
+- Code Base Changes:
+    - Add 15 seconds timeout on urlopen
+    - Add strings for debridlink oauth
+- Resolvers Added:
+    - anavids
+    - liivideo
+    - vidcloud9
+- Resolvers Fixed/Updated:
+    - alldebrid
+    - cda
+    - debridlink
+    - clipwatching
+    - premiumize
+    - upstream
+    - vkprime
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.61 (April 2, 2020)[/B]
+- Code Base Changes:
+    - strings
+- Resolvers Added:
+    - primevideos
+- Resolvers Fixed/Updated:
+    - aliez
+    - cda
+    - chromecast
+    - clicknupload
+    - clipwatching
+    - cloudb
+    - cloudmailru
+    - datemule
+    - gounlimited
+    - uptobox
+    - waaw
+- Resolvers Removed
+    - anyfiles
+    - bestream
+    - daclips
+    - estream
+    - gorillavid
+    - h265
+    - idtbox
+    - mehlizmovies
+    - movpod
+    - videoapne
+    - watchshare
+- Languages Added/Updated
+    - croatian
+    - czech
+    - dutch
+    - english (us)
+    - english
+    - galician
+    - german
+    - greek
+    - hebrew
+    - hungarian
+    - italian
+    - norwegian
+    - romanian
+    - slovak
+    - spanish
+    - swedish
+
+[B]Version 5.0.60 (March 27, 2020)[/B]
+- Code Base Changes:
+    - none
+- Resolvers Added:
+    - saruch
+    - sibnet
+    - vidfast
+    - vidspace
+- Resolvers Fixed/Updated:
+    - gamovideo
+    - upstream
+    - videa
+- Resolvers Removed
+    - fileholic
+    - putvid
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.59 (March 24, 2020)[/B]
+- Code Base Changes:
+    - none
+- Resolvers Added:
+    - none
+- Resolvers Fixed/Updated:
+    - dailymotion
+    - entervideo
+    - jetload
+    - streamwire
+    - uptobox
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.58 (March 20, 2020)[/B]
+- Code Base Changes:
+    - none
+- Resolvers Added:
+    - pkspeed
+    - streamwire
+- Resolvers Fixed/Updated:
+    - entervideo
+    - mystream
+    - streamz
+    - waaw
+- Resolvers Removed
+    - dailynotion
+    - megamp4
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.57 (March 15, 2020)[/B]
+- Code Base Changes:
+    - helpers
+- Resolvers Added:
+    - none
+- Resolvers Fixed/Updated:
+    - fembed
+    - videa
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.56 (March 6, 2020)[/B]
+- Code Base Changes:
+    - version bump
+- Resolvers Added:
+    - none
+- Resolvers Fixed/Updated:
+    - none
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.55 (February 27, 2020)[/B]
+- Code Base Changes:
+    - get_dom fix
+- Resolvers Added:
+    - none
+- Resolvers Fixed/Updated:
+    - videa.hu
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.54 (February 21, 2020)[/B]
+- Code Base Changes:
+    - none
+- Resolvers Added:
+    - none
+- Resolvers Fixed/Updated:
+    - gounlimited
+    - myviru
+- Resolvers Removed
+    - thevideo_me
+- Languages Added/Updated
+    - none
+
+[B]Version 5.0.53 (February 11, 2020)[/B]
+- Code Base Changes:
+    - none
+- Resolvers Added:
+    - thevideo_me
+- Resolvers Fixed/Updated:
+    - vevio
+- Resolvers Removed
+    - none
+- Languages Added/Updated
+    - none
+
 [B]Version 5.0.52 (February 6, 2020)[/B]
 - Code Base Changes:
     - none
