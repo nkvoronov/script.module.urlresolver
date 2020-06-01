@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
-import math
 import random
 import string
 import time
@@ -38,10 +37,10 @@ class DoodStreamResolver(UrlResolver):
         headers = {'User-Agent': common.RAND_UA}
 
         html = self.net.http_GET(web_url, headers=headers).content
-        match = re.search(r'''function\s*makePlay.+?return[^?]+([^"]+)[^/]+([^']+)''', html)
+        match = re.search(r'''vvplay[^']+'([^']+).+\n\s*function\s*makePlay.+?return[^?]+([^"]+)''', html)
         if match:
-            token = match.group(1)
-            url = 'https://dood.watch' + match.group(2)
+            token = match.group(2)
+            url = 'https://dood.watch' + match.group(1)
             headers.update({'Referer': web_url})
             html = self.net.http_GET(url, headers=headers).content
             return self.dood_decode(html) + token + str(int(time.time() * 1000)) + helpers.append_headers(headers)
@@ -56,4 +55,4 @@ class DoodStreamResolver(UrlResolver):
         data = data.replace('/', 'Z').decode('base64')
         data = data.replace('@', 'a').decode('base64')
         t = string.ascii_letters + string.digits
-        return data + ''.join([t[int(math.floor(random.random() * 62))] for _ in range(10)])
+        return data + ''.join([random.choice(t) for _ in range(10)])
