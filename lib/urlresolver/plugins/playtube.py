@@ -1,9 +1,6 @@
-"""
-    OVERALL CREDIT TO:
-        t0mm0, Eldorado, VOINAGE, BSTRDMKR, tknorris, smokdpi, TheHighway
-
-    urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+'''
+    Plugin for URLResolver
+    Copyright (C) 2020 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,14 +14,21 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-from lib import helpers
-from __generic_resolver__ import GenericResolver
+'''
 
-class StreameResolver(GenericResolver):
-    name = "streame.net"
-    domains = ['streame.net']
-    pattern = '(?://|\.)(streame\.net)/(?:embed-)?([0-9a-zA-Z]+)'
+from urlresolver.plugins.lib import helpers
+from urlresolver.plugins.__generic_resolver__ import GenericResolver
+
+
+class PlayTubeResolver(GenericResolver):
+    name = "playtube"
+    domains = ["playtube.ws"]
+    pattern = r'(?://|\.)(playtube\.ws)/(?:embed-)?([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
-        return helpers.get_media_url(self.get_url(host, media_id), result_blacklist=['dl']).replace('\/', '/')
+        return helpers.get_media_url(self.get_url(host, media_id),
+                                     patterns=[r'''sources\s*:\s*\["(?P<url>[^"]+)'''],
+                                     generic_patterns=False)
+
+    def get_url(self, host, media_id):
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')
