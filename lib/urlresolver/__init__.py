@@ -304,8 +304,8 @@ def _update_settings_xml():
             with open(common.settings_file, 'r', encoding='utf-8') as f:
                 old_xml = f.read()
         else:
-        with open(common.settings_file, 'r') as f:
-            old_xml = f.read()
+            with open(common.settings_file, 'r') as f:
+                old_xml = f.read()
     except:
         old_xml = u''
 
@@ -315,7 +315,7 @@ def _update_settings_xml():
         try:
             if six.PY3:
                 with open(common.settings_file, 'w', encoding='utf-8') as f:
-                f.write(new_xml)
+                    f.write(new_xml)
             else:
                 with open(common.settings_file, 'w') as f:
                     f.write(new_xml.encode('utf8'))

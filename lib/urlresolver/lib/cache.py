@@ -60,8 +60,8 @@ def _get_func(name, args=None, kwargs=None, cache_limit=1):
         mtime = os.path.getmtime(full_path)
         if mtime >= max_age:
             if six.PY2:
-            with open(full_path, 'r') as f:
-                pickled_result = f.read()
+                with open(full_path, 'r') as f:
+                    pickled_result = f.read()
             else:
                 with open(full_path, 'rb') as f:
                     pickled_result = f.read()
@@ -79,8 +79,8 @@ def _save_func(name, args=None, kwargs=None, result=None):
         pickled_result = pickle.dumps(result)
         full_path = os.path.join(cache_path, _get_filename(name, args, kwargs))
         if six.PY2:
-        with open(full_path, 'w') as f:
-            f.write(pickled_result)
+            with open(full_path, 'w') as f:
+                f.write(pickled_result)
         else:
             with open(full_path, 'wb') as f:
                 f.write(pickled_result)
@@ -90,7 +90,7 @@ def _save_func(name, args=None, kwargs=None, result=None):
 
 def _get_filename(name, args, kwargs):
     if six.PY2:
-    arg_hash = hashlib.md5(name).hexdigest() + hashlib.md5(str(args)).hexdigest() + hashlib.md5(str(kwargs)).hexdigest()
+        arg_hash = hashlib.md5(name).hexdigest() + hashlib.md5(str(args)).hexdigest() + hashlib.md5(str(kwargs)).hexdigest()
     else:
         arg_hash = hashlib.md5(name.encode('utf8')).hexdigest() + hashlib.md5(str(args).encode('utf8')).hexdigest() + hashlib.md5(str(kwargs).encode('utf8')).hexdigest()
     return arg_hash
