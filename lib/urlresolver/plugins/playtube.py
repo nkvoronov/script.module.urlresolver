@@ -1,5 +1,5 @@
-"""
-    Plugin for UrlResolver
+'''
+    Plugin for URLResolver
     Copyright (C) 2020 gujal
 
     This program is free software: you can redistribute it and/or modify
@@ -14,20 +14,23 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-from __generic_resolver__ import GenericResolver
-from lib import helpers
+'''
+
+from urlresolver.plugins.lib import helpers
+from urlresolver.plugins.__generic_resolver__ import GenericResolver
 
 
-class PrimeVideosResolver(GenericResolver):
-    name = "primevideos"
-    domains = ['primevideos.net']
-    pattern = r'(?://|\.)(primevideos\.net)/files/([0-9a-zA-Z]+)'
+class PlayTubeResolver(GenericResolver):
+    name = "playtube"
+    domains = ["playtube.ws"]
+    pattern = r'(?://|\.)(playtube\.ws)/(?:embed-)?([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
         return helpers.get_media_url(self.get_url(host, media_id),
-                                     patterns=[r'''source:\s*"(?P<url>[^"]+)'''],
-                                     generic_patterns=False)
+                                     patterns=[r'''sources\s*:\s*\["(?P<url>[^"]+)''',
+                                               r'''file:\s*"(?P<url>[^"]+)'''],
+                                     generic_patterns=False,
+                                     result_blacklist=['dl', '.srt', '.vtt'])
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='http://vdl.{host}/secure/{media_id}.html')
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')

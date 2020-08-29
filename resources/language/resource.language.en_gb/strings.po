@@ -14,15 +14,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#33000"
-msgid "OpenLoad Stream Authorization"
+msgid "OpenLoad Stream Authorisation"
 msgstr ""
 
 msgctxt "#33001"
-msgid "To play this video, authorization is required"
+msgid "To play this video, authorisation is required"
 msgstr ""
 
 msgctxt "#33002"
-msgid "Visit the link below to authorize the devices on your network:"
+msgid "Visit the link below to authorise the devices on your network:"
 msgstr ""
 
 msgctxt "#33003"
@@ -30,7 +30,7 @@ msgid "[B][COLOR blue]%s[/COLOR][/B] then click 'Pair'"
 msgstr ""
 
 msgctxt "#33004"
-msgid "No OpenLoad Authorization"
+msgid "No OpenLoad Authorisation"
 msgstr ""
 
 msgctxt "#33005"
@@ -46,11 +46,11 @@ msgid "Decryption Key"
 msgstr ""
 
 msgctxt "#33008"
-msgid "Vev.io Stream Authorization"
+msgid "Vev.io Stream Authorisation"
 msgstr ""
 
 msgctxt "#33009"
-msgid "VidUP.me Stream Authorization"
+msgid "VidUP.me Stream Authorisation"
 msgstr ""
 
 msgctxt "#33010"
@@ -86,11 +86,11 @@ msgid "Enabled"
 msgstr ""
 
 msgctxt "#33018"
-msgid "Real-Debrid Resolver Authorized"
+msgid "Real-Debrid Resolver Authorised"
 msgstr ""
 
 msgctxt "#33019"
-msgid "Real-Debrid Authorization Reset"
+msgid "Real-Debrid Authorisation Reset"
 msgstr ""
 
 msgctxt "#33020"
@@ -130,11 +130,11 @@ msgid "Choose Primary Link Automatically"
 msgstr ""
 
 msgctxt "#33029"
-msgid "(Re)Authorize My Account"
+msgid "(Re)Authorise My Account"
 msgstr ""
 
 msgctxt "#33030"
-msgid "Reset My Authorization"
+msgid "Reset My Authorisation"
 msgstr ""
 
 msgctxt "#33031"
@@ -174,11 +174,11 @@ msgid "OK"
 msgstr ""
 
 msgctxt "#33040"
-msgid "IP Stream Authorization Pairing"
+msgid "IP Stream Authorisation Pairing"
 msgstr ""
 
 msgctxt "#33041"
-msgid "No IP Authorization"
+msgid "No IP Authorisation"
 msgstr ""
 
 msgctxt "#33042"
@@ -186,19 +186,19 @@ msgid "Client ID"
 msgstr ""
 
 msgctxt "#33043"
-msgid "Vshare.eu Stream Authorization"
+msgid "Vshare.eu Stream Authorisation"
 msgstr ""
 
 msgctxt "#33044"
-msgid "Flashx Stream Authorization"
+msgid "Flashx Stream Authorisation"
 msgstr ""
 
 msgctxt "#33045"
-msgid "AllDebrid Authorization Reset"
+msgid "AllDebrid Authorisation Reset"
 msgstr ""
 
 msgctxt "#33046"
-msgid "AllDebrid Resolver Authorized"
+msgid "AllDebrid Resolver Authorised"
 msgstr ""
 
 msgctxt "#33047"
@@ -218,19 +218,19 @@ msgid "Cached torrents only"
 msgstr ""
 
 msgctxt "#33051"
-msgid "Premiumize Authorization Reset"
+msgid "Premiumize Authorisation Reset"
 msgstr ""
 
 msgctxt "#33052"
-msgid "Premiumize Resolver Authorized"
+msgid "Premiumize Resolver Authorised"
 msgstr ""
 
 msgctxt "#33053"
-msgid "Linksnappy Authorization Reset"
+msgid "Linksnappy Authorisation Reset"
 msgstr ""
 
 msgctxt "#33054"
-msgid "Linksnappy Resolver Authorized"
+msgid "Linksnappy Resolver Authorised"
 msgstr ""
 
 msgctxt "#33055"
@@ -263,4 +263,12 @@ msgstr ""
 
 msgctxt "#33062"
 msgid "Enter the PIN as [B][COLOR blue]{0}[/COLOR][/B] and then click 'Link Account'"
+msgstr ""
+
+msgctxt "#33063"
+msgid "Debrid-Link Authorisation Reset"
+msgstr ""
+
+msgctxt "#33064"
+msgid "Debrid-Link Resolver Authorised"
 msgstr ""

@@ -14,15 +14,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#33000"
-msgid "OpenLoad Stream Authorization"
+msgid "OpenLoad Stream Authorisation"
 msgstr "OpenLoad авторизація потоку"
 
 msgctxt "#33001"
-msgid "To play this video, authorization is required"
+msgid "To play this video, authorisation is required"
 msgstr "Для відтворення цього відео потрібна авторизація"
 
 msgctxt "#33002"
-msgid "Visit the link below to authorize the devices on your network:"
+msgid "Visit the link below to authorise the devices on your network:"
 msgstr "Перейдіть по посиланню нижче, щоб авторизувати пристрої у вашій мережі:"
 
 msgctxt "#33003"
@@ -30,7 +30,7 @@ msgid "[B][COLOR blue]%s[/COLOR][/B] then click 'Pair'"
 msgstr "[B][COLOR blue]%s[/COLOR][/B] потім натисніть 'Pair'"
 
 msgctxt "#33004"
-msgid "No OpenLoad Authorization"
+msgid "No OpenLoad Authorisation"
 msgstr "Немає авторизації OpenLoad"
 
 msgctxt "#33005"
@@ -46,11 +46,11 @@ msgid "Decryption Key"
 msgstr "Ключ дешифрування"
 
 msgctxt "#33008"
-msgid "Vev.io Stream Authorization"
+msgid "Vev.io Stream Authorisation"
 msgstr "Vev.io авторизація потоку"
 
 msgctxt "#33009"
-msgid "VidUP.me Stream Authorization"
+msgid "VidUP.me Stream Authorisation"
 msgstr "VidUP.me авторизація потоку"
 
 msgctxt "#33010"
@@ -86,11 +86,11 @@ msgid "Enabled"
 msgstr "Дозволено"
 
 msgctxt "#33018"
-msgid "Real-Debrid Resolver Authorized"
+msgid "Real-Debrid Resolver Authorised"
 msgstr "Real-Debrid резольвер авторизовані"
 
 msgctxt "#33019"
-msgid "Real-Debrid Authorization Reset"
+msgid "Real-Debrid Authorisation Reset"
 msgstr "Real-Debrid скидання авторизації"
 
 msgctxt "#33020"
@@ -130,11 +130,11 @@ msgid "Choose Primary Link Automatically"
 msgstr "Автоматично вибирати основну посилання"
 
 msgctxt "#33029"
-msgid "(Re)Authorize My Account"
+msgid "(Re)Authorise My Account"
 msgstr "Переавторізовать мій обліковий запис"
 
 msgctxt "#33030"
-msgid "Reset My Authorization"
+msgid "Reset My Authorisation"
 msgstr "Скинути мою авторизацію"
 
 msgctxt "#33031"
@@ -174,11 +174,11 @@ msgid "OK"
 msgstr "Так"
 
 msgctxt "#33040"
-msgid "IP Stream Authorization Pairing"
+msgid "IP Stream Authorisation Pairing"
 msgstr "Сполучення авторизації IP потоку"
 
 msgctxt "#33041"
-msgid "No IP Authorization"
+msgid "No IP Authorisation"
 msgstr "Немає автоізаціі IP"
 
 msgctxt "#33042"
@@ -186,19 +186,19 @@ msgid "Client ID"
 msgstr "Клієнт ID"
 
 msgctxt "#33043"
-msgid "Vshare.eu Stream Authorization"
+msgid "Vshare.eu Stream Authorisation"
 msgstr "Vshare.eu авторизація потоку"
 
 msgctxt "#33044"
-msgid "Flashx Stream Authorization"
+msgid "Flashx Stream Authorisation"
 msgstr "Flashx авторизація потоку"
 
 msgctxt "#33045"
-msgid "AllDebrid Authorization Reset"
+msgid "AllDebrid Authorisation Reset"
 msgstr "AllDebrid авторизація скинута"
 
 msgctxt "#33046"
-msgid "AllDebrid Resolver Authorized"
+msgid "AllDebrid Resolver Authorised"
 msgstr "AllDebrid резолвер авторизован"
 
 msgctxt "#33047"
@@ -218,19 +218,19 @@ msgid "Cached torrents only"
 msgstr "Тільки кешированниє торренти"
 
 msgctxt "#33051"
-msgid "Premiumize Authorization Reset"
+msgid "Premiumize Authorisation Reset"
 msgstr "Premiumize авторизація скинута"
 
 msgctxt "#33052"
-msgid "Premiumize Resolver Authorized"
+msgid "Premiumize Resolver Authorised"
 msgstr "Premiumize резолвер авторизован"
 
 msgctxt "#33053"
-msgid "Linksnappy Authorization Reset"
+msgid "Linksnappy Authorisation Reset"
 msgstr "Linksnappy авторизація скинута"
 
 msgctxt "#33054"
-msgid "Linksnappy Resolver Authorized"
+msgid "Linksnappy Resolver Authorised"
 msgstr "Linksnappy резолвер авторизован"
 
 msgctxt "#33055"
@@ -248,3 +248,27 @@ msgstr "секунд"
 msgctxt "#33058"
 msgid "Cached filehosts only"
 msgstr "Кешувати тільки файлові хости"
+
+msgctxt "#33059"
+msgid "JetLoad Stream Authorisation"
+msgstr ""
+
+msgctxt "#33060"
+msgid "Uptobox Stream Authorisation"
+msgstr ""
+
+msgctxt "#33061"
+msgid "Visit this link: [B][COLOR blue]{0}[/COLOR][/B]"
+msgstr ""
+
+msgctxt "#33062"
+msgid "Enter the PIN as [B][COLOR blue]{0}[/COLOR][/B] and then click 'Link Account'"
+msgstr ""
+
+msgctxt "#33063"
+msgid "Debrid-Link Authorisation Reset"
+msgstr ""
+
+msgctxt "#33064"
+msgid "Debrid-Link Resolver Authorised"
+msgstr ""

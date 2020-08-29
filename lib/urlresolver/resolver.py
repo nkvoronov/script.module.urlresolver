@@ -21,6 +21,7 @@ import os
 import re
 import abc
 from urlresolver import common
+import six
 
 abstractstaticmethod = abc.abstractmethod
 
@@ -45,7 +46,10 @@ class UrlResolver(object):
     
     domains: (array) List of domains handled by this plugin. (Use ["*"] for universal resolvers.)
     '''
+    name = 'generic'
     domains = ['localdomain']
+    pattern = None
+    net = common.Net()
 
     @abc.abstractmethod
     def get_media_url(self, host, media_id):
@@ -102,7 +106,7 @@ class UrlResolver(object):
             True if this plugin thinks it can handle the web_url or host
             otherwise False.
         """
-        if isinstance(host, basestring):
+        if isinstance(host, six.string_types):
             host = host.lower()
         
         if url:
@@ -167,8 +171,10 @@ class UrlResolver(object):
 
     @classmethod
     def _get_priority(cls):
-        try: return int(cls.get_setting('priority'))
-        except: return 100
+        try:
+            return int(cls.get_setting('priority'))
+        except:
+            return 100
     
     @classmethod
     def _is_enabled(cls):
@@ -184,7 +190,8 @@ class UrlResolver(object):
         return host
     
     def _default_get_url(self, host, media_id, template=None):
-        if template is None: template = 'http://{host}/embed-{media_id}.html'
+        if template is None:
+            template = 'http://{host}/embed-{media_id}.html'
         host = self._get_host(host)
         return template.format(host=host, media_id=media_id)
 

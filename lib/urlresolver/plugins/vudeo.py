@@ -1,6 +1,6 @@
-'''
-    Plugin for URLResolver
-    Copyright (C) 2018 gujal
+"""
+    Plugin for UrlResolver
+    Copyright (C) 2020 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,13 +14,20 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-'''
-from __generic_resolver__ import GenericResolver
+"""
 
-class VidFileResolver(GenericResolver):
-    name = 'flix555'
-    domains = ["flix555.com"]
-    pattern = '(?://|\.)(flix555\.com)/(?:embed-)?([a-zA-Z0-9]+)'
+from urlresolver.plugins.__generic_resolver__ import GenericResolver
+from urlresolver.plugins.lib import helpers
+
+
+class VudeoResolver(GenericResolver):
+    name = "vudeo"
+    domains = ["vudeo.net"]
+    pattern = r'(?://|\.)(vudeo\.net)/(?:embed-)?([0-9a-zA-Z-]+)'
+
+    def get_media_url(self, host, media_id):
+        return helpers.get_media_url(self.get_url(host, media_id),
+                                     patterns=[r'''sources:\s*\["(?P<url>[^"]+)'''])
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, 'https://{host}/embed-{media_id}.html')
+        return self._default_get_url(host, media_id, template='https://{host}/embed-{media_id}.html')

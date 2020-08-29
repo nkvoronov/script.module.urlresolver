@@ -1,6 +1,6 @@
-'''
-Plugin for URLResolver
-Copyright (C) 2018 gujal
+"""
+Plugin for UrlResolver
+Copyright (C) 2020 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,38 +14,32 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import re
-from lib import helpers
-from lib import jsunpack
+from urlresolver.plugins.lib import helpers
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class IRShareResolver(UrlResolver):
-    name = "irshare"
-    domains = ["irshare.net"]
-    pattern = '(?://|\.)(irshare\.net)/embed/([0-9a-zA-Z]+)'
+
+class StreamTapeResolver(UrlResolver):
+    name = "streamtape"
+    domains = ['streamtape.com']
+    pattern = r'(?://|\.)(streamtape\.com)/(?:e|v)/([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.RAND_UA,
-                   'Referer': web_url}
+        headers = {'User-Agent': common.FF_USER_AGENT,
+                   'Referer': 'https://{0}/'.format(host)}
         html = self.net.http_GET(web_url, headers=headers).content
-
-        r = re.search('JuicyCodes\.Run\("([^)]+)"\)', html)
-        
-        if r:
-            jc = r.group(1).replace('"+"', '').decode('base64')
-            jc = jsunpack.unpack(jc)
-            sources = helpers.scrape_sources(jc)
-            headers.update({'Range': 'bytes=0-'})
-            return helpers.pick_source(sources) + helpers.append_headers(headers)
-
+        src = re.search('"videolink"[^>]+>([^<]+)', html)
+        if src:
+            src_url = 'https:' + src.group(1) if src.group(1).startswith('//') else src.group(1)
+            return helpers.get_redirect_url(src_url, headers) + helpers.append_headers(headers)
         raise ResolverError('Video cannot be located.')
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/embed/{media_id}/')
+        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
