@@ -113,7 +113,7 @@ class HostedMediaFile:
                 resolver_cache[klass] = klass()
                 resolvers.append(resolver_cache[klass])
         return resolvers
-    
+
     def __top_domain(self, url):
         elements = urllib_parse.urlparse(url)
         domain = elements.netloc or elements.path
@@ -150,7 +150,7 @@ class HostedMediaFile:
         if validated:
             self.valid_url()
         return self.__resolvers
-        
+
     def resolve(self, include_universal=True, allow_popups=True):
         """
         Resolves this :class:`HostedMediaFile` to a media URL.
@@ -226,7 +226,7 @@ class HostedMediaFile:
                 except:
                     # print sys.exc_info()
                     continue
-                
+
             self.__resolvers = resolvers
             self._valid_url = True if resolvers else False
         return self._valid_url
@@ -261,7 +261,7 @@ class HostedMediaFile:
             msg = ''
             request = urllib_request.Request(stream_url.split('|')[0], headers=headers)
             # only do a HEAD request. gujal
-            request.get_method = lambda : 'HEAD'
+            request.get_method = lambda: 'HEAD'
             #  set urlopen timeout to 15 seconds
             http_code = urllib_request.urlopen(request, timeout=15).getcode()
         except urllib_error.HTTPError as e:
@@ -279,7 +279,7 @@ class HostedMediaFile:
                     msg = e.reason
             if not msg:
                 msg = str(e)
-                    
+
         except Exception as e:
             http_code = 601
             msg = str(e)

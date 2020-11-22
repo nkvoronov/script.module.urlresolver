@@ -21,7 +21,7 @@ For most cases you probably want to use :func:`urlresolver.resolve` or
 :func:`urlresolver.choose_source`.
 
 .. seealso::
-    
+
     :class:`HostedMediaFile`
 
 
@@ -36,7 +36,7 @@ from urlresolver import common
 from urlresolver.hmf import HostedMediaFile
 from urlresolver.resolver import UrlResolver
 from urlresolver.plugins.__generic_resolver__ import GenericResolver
-from urlresolver.plugins import *
+from urlresolver.plugins import *  # NOQA
 
 common.logger.log_debug('Initializing URLResolver version: %s' % common.addon_version)
 MAX_SETTINGS = 75
@@ -68,7 +68,7 @@ def load_external_plugins():
 def relevant_resolvers(domain=None, include_universal=None, include_popups=None, include_external=False, include_disabled=False, order_matters=False):
     if include_external:
         load_external_plugins()
-    
+
     if isinstance(domain, six.string_types):
         domain = domain.lower()
 
@@ -79,7 +79,7 @@ def relevant_resolvers(domain=None, include_universal=None, include_popups=None,
         include_popups = common.get_setting('allow_popups') == "true"
     if include_popups is False:
         common.logger.log_debug('Resolvers that require popups have been disabled')
-        
+
     classes = UrlResolver.__class__.__subclasses__(UrlResolver) + UrlResolver.__class__.__subclasses__(GenericResolver)
     relevant = []
     for resolver in classes:
@@ -213,7 +213,7 @@ def scrape_supported(html, regex=None, host_only=False):
         if host_only:
             if host is None:
                 continue
-            
+
             if host in host_cache:
                 if host_cache[host]:
                     links.append(stream_url)
@@ -222,7 +222,7 @@ def scrape_supported(html, regex=None, host_only=False):
                 hmf = HostedMediaFile(host=host, media_id='dummy')  # use dummy media_id to allow host validation
         else:
             hmf = HostedMediaFile(url=stream_url)
-        
+
         is_valid = hmf.valid_url()
         host_cache[host] = is_valid
         if is_valid:
@@ -308,6 +308,7 @@ def _update_settings_xml():
                 old_xml = f.read()
     except:
         old_xml = u''
+    old_xml = six.ensure_text(old_xml)
 
     new_xml = six.ensure_text('\n'.join(new_xml))
     if old_xml != new_xml:
