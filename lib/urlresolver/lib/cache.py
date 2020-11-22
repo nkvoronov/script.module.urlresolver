@@ -33,9 +33,9 @@ try:
         os.makedirs(cache_path)
 except Exception as e:
     logger.log('Failed to create cache: %s: %s' % (cache_path, e), log_utils.LOGWARNING)
-    
+
 cache_enabled = kodi.get_setting('use_cache') == 'true'
-    
+
 
 def reset_cache():
     try:
@@ -44,7 +44,7 @@ def reset_cache():
     except Exception as e:
         logger.log('Failed to Reset Cache: %s' % (e), log_utils.LOGWARNING)
         return False
-    
+
 
 def _get_func(name, args=None, kwargs=None, cache_limit=1):
     if not cache_enabled:
@@ -66,9 +66,9 @@ def _get_func(name, args=None, kwargs=None, cache_limit=1):
                 with open(full_path, 'rb') as f:
                     pickled_result = f.read()
             return True, pickle.loads(pickled_result)
-    
+
     return False, None
-    
+
 
 def _save_func(name, args=None, kwargs=None, result=None):
     try:

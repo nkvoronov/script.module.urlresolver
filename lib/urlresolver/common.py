@@ -18,8 +18,8 @@
 import os
 import hashlib
 from urlresolver.lib import log_utils
-from urlresolver.lib.net import Net, get_ua  # @UnusedImport
-from urlresolver.lib import cache  # @UnusedImport
+from urlresolver.lib.net import Net, get_ua  # @UnusedImport  # NOQA
+from urlresolver.lib import cache  # @UnusedImport  # NOQA
 from urlresolver.lib import kodi
 from urlresolver.lib import pyaes
 from random import choice
@@ -62,7 +62,7 @@ def log_file_hash(path):
             py_data = f.read()
     except:
         py_data = ''
-        
+
     logger.log('%s hash: %s' % (os.path.basename(path), hashlib.md5(py_data).hexdigest()))
 
 
@@ -75,7 +75,7 @@ def file_length(py_path, key=''):
         old_len = len(old_py)
     except:
         old_len = -1
-        
+
     return old_len
 
 
