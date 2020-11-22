@@ -1,6 +1,6 @@
 """
     Plugin for UrlResolver
-    Copyright (C) 2020 Anis
+    Copyright (C) 2020 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,28 +16,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from urlresolver.plugins.lib import helpers
 import re
-import base64
 from urlresolver import common
+from urlresolver.plugins.lib import helpers
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class AniStreamResolver(UrlResolver):
-    name = "ani-stream"
-    domains = ["ani-stream.com"]
-    pattern = r'(?://|\.)(ani-stream\.com)/(?:embed-)?([0-9a-zA-Z-]+)'
+class AparatResolver(UrlResolver):
+    name = "aparat"
+    domains = ['aparat.cam']
+    pattern = r'(?://|\.)(aparat\.cam)/(?:embed-)?([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
         headers = {'User-Agent': common.FF_USER_AGENT}
         html = self.net.http_GET(web_url, headers=headers).content
-        r = re.search(r'base64,([^"]+)', html)
-        if r:
-            html = base64.b64decode(r.group(1)).decode('utf-8')
-            sources = helpers.scrape_sources(html)
+        headers.update({'Referer': web_url})
+
+        match = re.search(r'Video is processing now\.', html)
+        if match:
+            raise ResolverError('Video is still processing. Try later')
+
+        match = re.search(r'&hash=([^&]+)', html)
+        if match:
+            web_url = 'https://{0}/dl?op=download_orig&id={1}&mode=o&hash={2}'.format(host, media_id, match.group(1))
+            html2 = self.net.http_GET(web_url, headers=headers).content
+            r = re.search(r'<a\s*href="([^"]+)[^>]+>Direct', html2)
+            if r:
+                return r.group(1) + helpers.append_headers(headers)
+
+        match = re.search(r'src:\s*"([^"]+)', html)
+        if match:
+            html2 = self.net.http_GET(match.group(1), headers=headers).content
+            sources = re.findall(r'RESOLUTION=\d+x(?P<label>[\d]+).+\n(?!#)(?P<url>[^\n]+)', html2, re.IGNORECASE)
             if sources:
                 return helpers.pick_source(helpers.sort_sources_list(sources)) + helpers.append_headers(headers)
+
         raise ResolverError('Video Link Not Found')
 
     def get_url(self, host, media_id):

@@ -36,7 +36,7 @@ from urlresolver import common
 from urlresolver.hmf import HostedMediaFile
 from urlresolver.resolver import UrlResolver
 from urlresolver.plugins.__generic_resolver__ import GenericResolver
-from urlresolver.plugins import *
+from urlresolver.plugins import *  # NOQA
 
 common.logger.log_debug('Initializing URLResolver version: %s' % common.addon_version)
 MAX_SETTINGS = 75
@@ -308,6 +308,7 @@ def _update_settings_xml():
                 old_xml = f.read()
     except:
         old_xml = u''
+    old_xml = six.ensure_text(old_xml)
 
     new_xml = six.ensure_text('\n'.join(new_xml))
     if old_xml != new_xml:
