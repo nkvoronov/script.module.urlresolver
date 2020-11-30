@@ -22,25 +22,27 @@ from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class StreamTapeResolver(UrlResolver):
-    name = "streamtape"
-    domains = ['streamtape.com']
-    pattern = r'(?://|\.)(streamtape\.com)/(?:e|v)/([0-9a-zA-Z]+)'
+class AnaVidsResolver(UrlResolver):
+    name = "letsupload.io"
+    domains = ['letsupload.io', 'letsupload.org']
+    pattern = r'(?://|\.)(letsupload\.(?:io|org))/([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
-        headers = {'User-Agent': common.FF_USER_AGENT,
-                   'Referer': 'https://{0}/'.format(host)}
-        r = self.net.http_GET(web_url, headers=headers)
-        src = re.search(r"videolink'.+?innerHTML']='([^']+)", r.content)
-        if src:
-            src_url = 'https:' + src.group(1) if src.group(1).startswith('//') else src.group(1)
-            src_url += '&stream=1'
-            return helpers.get_redirect_url(src_url, headers) + helpers.append_headers(headers)
+        headers = {'User-Agent': common.FF_USER_AGENT}
+        html = self.net.http_GET(web_url, headers=headers).content
+        r = re.search(r"href='([^']+)'>download\s*now", html)
+        if r:
+            common.kodi.sleep(3000)
+            headers.update({'Referer': web_url})
+            html = self.net.http_GET(r.group(1), headers=headers).content
+            f = re.search(r'href="([^"]+)', html)
+            if f:
+                return f.group(1) + helpers.append_headers(headers)
         raise ResolverError('Video cannot be located.')
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
+        return self._default_get_url(host, media_id, template='https://{host}/{media_id}')
