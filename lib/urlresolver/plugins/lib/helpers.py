@@ -144,15 +144,14 @@ def scrape_sources(html, result_blacklist=None, scheme='http', patterns=None, ge
             match = r.groupdict()
             stream_url = match['url'].replace('&amp;', '&')
             file_name = urllib_parse.urlparse(stream_url[:-1]).path.split('/')[-1] if stream_url.endswith("/") else urllib_parse.urlparse(stream_url).path.split('/')[-1]
-            blocked = not file_name or any(item in file_name.lower() for item in _blacklist)
+            label = match.get('label', file_name)
+            if label is None:
+                label = file_name
+            blocked = not file_name or any(item in file_name.lower() for item in _blacklist) or any(item in label for item in _blacklist)
             if stream_url.startswith('//'):
                 stream_url = scheme + ':' + stream_url
             if '://' not in stream_url or blocked or (stream_url in streams) or any(stream_url == t[1] for t in source_list):
                 continue
-
-            label = match.get('label', file_name)
-            if label is None:
-                label = file_name
             labels.append(label)
             streams.append(stream_url)
 
@@ -299,12 +298,7 @@ def fun_decode(vu, lc, hr='16'):
 
 
 def get_redirect_url(url, headers={}):
-    class NoRedirection(urllib_request.HTTPErrorProcessor):
-        def http_response(self, request, response):
-            return response
-
-    opener = urllib_request.build_opener(NoRedirection, urllib_request.HTTPHandler)
-    urllib_request.install_opener(opener)
     request = urllib_request.Request(url, headers=headers)
+    request.get_method = lambda: 'HEAD'
     response = urllib_request.urlopen(request)
     return response.geturl()

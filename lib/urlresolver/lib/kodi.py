@@ -15,8 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from kodi_six import xbmc, xbmcgui, xbmcplugin, xbmcaddon
-import xbmcvfs
+from kodi_six import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
 from six.moves import urllib_parse
 import six
 import sys
@@ -42,7 +41,7 @@ def get_profile():
 
 
 def translate_path(path):
-    return xbmcvfs.translatePath(path) if six.PY3 else xbmcvfs.translatePath(path)
+    return xbmcvfs.translatePath(path) if six.PY3 else xbmc.translatePath(path)
 
 
 def set_setting(id, value):
@@ -127,7 +126,7 @@ else:
 
 def i18n(string_id):
     try:
-        return addon.getLocalizedString(strings.STRINGS[string_id]) if six.PY3 else addon.getLocalizedString(strings.STRINGS[string_id]).encode('utf-8', 'ignore')
+        return six.ensure_str(addon.getLocalizedString(strings.STRINGS[string_id]))
     except Exception as e:
         _log('Failed String Lookup: %s (%s)' % (string_id, e))
         return string_id
