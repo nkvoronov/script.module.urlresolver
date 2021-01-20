@@ -1,6 +1,6 @@
 """
-    Plugin for URLResolver
-    Copyright (C) 2016 Gujal
+Plugin for UrlResolver
+Copyright (C) 2020 gujal
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,25 +16,33 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
 from urlresolver.plugins.lib import helpers
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class HDvidResolver(UrlResolver):
-    name = 'HDvid'
-    domains = ['hdvid.tv']
-    pattern = r'(?://|\.)(hdvid\.(?:tv|fun))/(?:embed-)?([0-9a-zA-Z]+)'
+class LetsUploadResolver(UrlResolver):
+    name = "letsupload.io"
+    domains = ['letsupload.io', 'letsupload.org']
+    pattern = r'(?://|\.)(letsupload\.(?:io|org))/([0-9a-zA-Z]+)'
+
+    def __init__(self):
+        self.net = common.Net()
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
         headers = {'User-Agent': common.FF_USER_AGENT}
         html = self.net.http_GET(web_url, headers=headers).content
-        sources = helpers.scrape_sources(html)
-        if sources:
-            headers.update({'verifypeer': 'false'})
-            return helpers.pick_source(sources) + helpers.append_headers(headers)
+        r = re.search(r"href='([^']+)'>download\s*now", html)
+        if r:
+            common.kodi.sleep(3000)
+            headers.update({'Referer': web_url})
+            html = self.net.http_GET(r.group(1), headers=headers).content
+            f = re.search(r'href="([^"]+)', html)
+            if f:
+                return f.group(1) + helpers.append_headers(headers)
         raise ResolverError('Video cannot be located.')
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://hdvid.fun/embed-{media_id}.html')
+        return self._default_get_url(host, media_id, template='https://{host}/{media_id}')
