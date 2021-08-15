@@ -1,6 +1,6 @@
 """
     Plugin for URLResolver
-    Copyright (C) 2020  script.module.urlresolver
+    Copyright (C) 2021  gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,13 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from urlresolver.plugins.lib import helpers
 from urlresolver.plugins.__generic_resolver__ import GenericResolver
 
 
-class LiveLeakResolver(GenericResolver):
-    name = "liveleak"
-    domains = ["liveleak.com"]
-    pattern = r'(?://|\.)(liveleak\.com)/view\?t=([0-9A-Za-z_]+)'
+class VUploadResolver(GenericResolver):
+    name = "vupload"
+    domains = ["vupload.com"]
+    pattern = r'(?://|\.)(vupload\.com)/(?:e/)?([0-9A-Za-z]+)'
+
+    def get_media_url(self, host, media_id):
+        return helpers.get_media_url(self.get_url(host, media_id),
+                                     patterns=[r'''src:\s*"(?P<url>[^"]+)",\s*type:\s*"video/mp4",\s*res:\s*(?P<label>[^,]+)'''],
+                                     generic_patterns=False)
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://www.{host}/view?t={media_id}')
+        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
