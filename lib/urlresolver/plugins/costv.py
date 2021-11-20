@@ -1,6 +1,6 @@
 """
     Plugin for URLResolver
-    Copyright (C) 2020  gujal
+    Copyright (C) 2021 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,32 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import base64
+import json
 from urlresolver import common
 from urlresolver.plugins.lib import helpers
-from urlresolver.resolver import UrlResolver
+from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class VoeResolver(UrlResolver):
-    name = "voe"
-    domains = ["voe.sx"]
-    pattern = r'(?://|\.)(voe\.sx)/(?:e/)?([0-9A-Za-z]+)'
+class CosTVResolver(UrlResolver):
+    name = 'costv'
+    domains = ['cos.tv']
+    pattern = r'(?://|\.)(cos\.tv)/videos/play/([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
+
         web_url = self.get_url(host, media_id)
         headers = {'User-Agent': common.RAND_UA,
                    'Referer': 'https://{0}/'.format(host)}
-        html = self.net.http_GET(web_url, headers=headers).content
-        r = re.search(r'uttf0\((\[[^)]+)', html)
-        if r:
-            r = eval(r.group(1))
-            r = base64.b64decode(''.join(r)[::-1].encode('utf8')).decode('utf8')
-            return r + helpers.append_headers(headers)
+        res = self.net.http_GET(web_url, headers=headers).content
+        jd = json.loads(res)
+        if jd.get("message") == "Success":
+            str_url = jd.get('data', {}).get("videosource")
+            if str_url:
+                return str_url + helpers.append_headers(headers)
 
-        return helpers.get_media_url(web_url,
-                                     patterns=[r'''hls":\s*"(?P<url>[^"]+)",\s*"video_height":\s*(?P<label>[^,]+)'''],
-                                     generic_patterns=False)
+        raise ResolverError('Unable to locate video')
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
+        return self._default_get_url(host, media_id, template='https://{host}/api/v1/feed/video/video_info?vid={media_id}')

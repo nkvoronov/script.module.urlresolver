@@ -25,8 +25,8 @@ from urlresolver.resolver import UrlResolver, ResolverError
 
 class UpVideoResolver(UrlResolver):
     name = "upvideo.to"
-    domains = ['upvideo.to', 'videoloca.xyz', 'tnaket.xyz', 'makaveli.xyz']
-    pattern = r'(?://|\.)((?:upvideo|videoloca|makaveli|tnaket)\.(?:to|xyz))/(?:e|v)/([0-9a-zA-Z]+)'
+    domains = ['upvideo.to', 'videoloca.xyz', 'tnaket.xyz', 'makaveli.xyz', 'highload.to']
+    pattern = r'(?://|\.)((?:upvideo|videoloca|makaveli|tnaket|highload)\.(?:to|xyz))/(?:e|v|f)/([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
@@ -41,12 +41,23 @@ class UpVideoResolver(UrlResolver):
             html = re.findall('<head>(.+?)</head>', html, re.DOTALL)[0]
             html = jsunhunt.unhunt(html)
 
-        r = re.search(r'var\s*ebdbcdbeffbe\s*=\s*"([^"]+)', html)
-        if r:
-            surl = r.group(1).replace('MDZhYTRhMDViOWZkNzlkZjE5ODAzNDNkYTljY2ZkZmU', '')
-            surl = surl.replace('NzU1ODRlMDM3NGIzZjk1NTIxZGUzZTQ3MDRiOTNjOTY=', '')
-            surl = base64.b64decode(surl).decode('utf-8')
-            return surl.replace(' ', '%20') + helpers.append_headers(headers)
+        aurl = 'https://{0}/assets/js/tabber.js'.format(host)
+        ahtml = self.net.http_GET(aurl, headers=headers).content
+        if jsunhunt.detect(ahtml):
+            pass
+        else:
+            aurl = 'https://{0}/assets/js/master.js'.format(host)
+            ahtml = self.net.http_GET(aurl, headers=headers).content
+
+        if jsunhunt.detect(ahtml):
+            ahtml = jsunhunt.unhunt(ahtml)
+            var, rep1, rep2 = re.findall(r'''var\s*res\s*=\s*([^.]+)\.replace\("([^"]+).+?replace\("([^"]+)''', ahtml, re.DOTALL)[0]
+            r = re.search(r'var\s*{0}\s*=\s*"([^"]+)'.format(var), html)
+            if r:
+                surl = r.group(1).replace(rep1, '')
+                surl = surl.replace(rep2, '')
+                surl = base64.b64decode(surl).decode('utf-8')
+                return surl.replace(' ', '%20') + helpers.append_headers(headers)
 
         raise ResolverError("Video not found")
 

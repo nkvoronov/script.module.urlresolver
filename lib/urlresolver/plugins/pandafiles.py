@@ -16,36 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re, json
 from urlresolver.plugins.lib import helpers
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class EvoLoadResolver(UrlResolver):
-    name = "evoload"
-    domains = ["evoload.io"]
-    pattern = r'(?://|\.)(evoload\.io)/(?:e|f|v)/([0-9a-zA-Z]+)'
+class PandaFilesResolver(UrlResolver):
+    name = "pandafiles"
+    domains = ['pandafiles.com']
+    pattern = r'(?://|\.)(pandafiles\.com)/([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
-        surl = 'https://evoload.io/SecurePlayer'
         web_url = self.get_url(host, media_id)
         rurl = 'https://{0}/'.format(host)
         headers = {'User-Agent': common.FF_USER_AGENT,
+                   'Origin': rurl[:-1],
                    'Referer': rurl}
-        html = self.net.http_GET(web_url, headers).content
-        passe = re.search('<div id="captcha_pass" value="(.+?)"></div>', html).group(1)
-        headers.update({'Origin': rurl[:-1]})
-        crsv = self.net.http_GET('https://csrv.evosrv.com/captcha?m412548', headers).content
-        post = {"code": media_id, "csrv_token": crsv, "pass": passe, "token": "ok"}
-        shtml = self.net.http_POST(surl, form_data=post, headers=headers, jdata=True).content
-        r = json.loads(shtml).get('stream')
-        if r:
-            surl = r.get('backup') if r.get('backup') else r.get('src')
-            if surl:
-                return surl + helpers.append_headers(headers)
+        data = {
+            'op': 'download1',
+            'usr_login': '',
+            'id': media_id,
+            'referer': rurl,
+            'method_free': 'Free Download'
+        }
+        html = self.net.http_POST(web_url, form_data=data, headers=headers).content
+        sources = helpers.scrape_sources(html)
+        if sources:
+            return helpers.pick_source(sources) + helpers.append_headers(headers)
 
         raise ResolverError('File Not Found or removed')
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
+        return self._default_get_url(host, media_id, template='https://{host}/{media_id}')
