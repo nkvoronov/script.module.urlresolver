@@ -26,15 +26,21 @@ from urlresolver.resolver import UrlResolver, ResolverError
 
 class DoodStreamResolver(UrlResolver):
     name = "doodstream"
-    domains = ['dood.watch', 'doodstream.com', 'dood.to', 'dood.so', 'dood.cx', 'dood.la']
-    pattern = r'(?://|\.)(dood(?:stream)?\.(?:com|watch|to|so|cx|la))/(?:d|e)/([0-9a-zA-Z]+)'
+    domains = ['dood.watch', 'doodstream.com', 'dood.to', 'dood.so', 'dood.cx', 'dood.la', 'dood.ws']
+    pattern = r'(?://|\.)(dood(?:stream)?\.(?:com|watch|to|so|cx|la|ws))/(?:d|e)/([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
         headers = {'User-Agent': common.RAND_UA,
                    'Referer': 'https://{0}/'.format(host)}
 
-        html = self.net.http_GET(web_url, headers=headers).content
+        r = self.net.http_GET(web_url, headers=headers)
+        if r.get_url() != web_url:
+            host = re.findall(r'(?://|\.)([^/]+)', r.get_url())[0]
+            web_url = self.get_url(host, media_id)
+        headers.update({'Referer': web_url})
+
+        html = r.content
         match = re.search(r'''dsplayer\.hotkeys[^']+'([^']+).+?function\s*makePlay.+?return[^?]+([^"]+)''', html, re.DOTALL)
         if match:
             token = match.group(2)

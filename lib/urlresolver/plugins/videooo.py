@@ -1,6 +1,6 @@
 """
 Plugin for UrlResolver
-Copyright (C) 2021 gujal
+Copyright (C) 2021
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,15 +16,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from urlresolver.plugins.lib import helpers
 from urlresolver.plugins.__generic_resolver__ import GenericResolver
+from urlresolver.plugins.lib import helpers
 from six.moves import urllib_parse
 
 
-class SpeedoStreamResolver(GenericResolver):
-    name = "speedostream"
-    domains = ["speedostream.com"]
-    pattern = r'(?://|\.)(speedostream\.com)/(?:embed-)?([^\n]+)'
+class VideoooResolver(GenericResolver):
+    name = "videooo"
+    domains = ["videooo.news"]
+    pattern = r'(?://|\.)(videooo\.news)/(?:embed-)?([^\n]+)'
 
     def get_media_url(self, host, media_id):
         if '$$' in media_id:
@@ -33,7 +33,7 @@ class SpeedoStreamResolver(GenericResolver):
         else:
             referer = True
         return helpers.get_media_url(self.get_url(host, media_id),
-                                     patterns=[r'''sources\s*:\s*\[{file:\s*"(?P<url>[^"]+)'''],
+                                     patterns=[r'''sources:\s*\[{file:\s*"(?P<url>[^"]+)'''],
                                      generic_patterns=False,
                                      referer=referer)
 

@@ -193,11 +193,13 @@ class Net:
                     handlers += [urllib_request.HTTPSHandler(context=ctx)]
             except:
                 pass
-
-        if drop_tls_level:
+        else:
             try:
                 import ssl
-                ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_1)
+                import certifi
+                ctx = ssl.create_default_context(cafile=certifi.where())
+                if drop_tls_level:
+                    ctx.protocol = ssl.PROTOCOL_TLSv1_1
                 if self._http_debug:
                     handlers += [urllib_request.HTTPSHandler(context=ctx, debuglevel=1)]
                 else:
@@ -412,7 +414,6 @@ class HttpResponse:
                     hdrs.update({item[0].title(): item[1]})
                 else:
                     hdrs.update({item[0].title(): ','.join([hdrs[item[0].title()], item[1]])})
-            # return dict([(item[0].title(), item[1]) for item in list(self._response.info().items())])
             return hdrs
         else:
             return self._response.info()._headers if six.PY3 else [(x.split(':')[0].strip(), x.split(':')[1].strip()) for x in self._response.info().headers]

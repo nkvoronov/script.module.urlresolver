@@ -16,34 +16,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re, json
+import json
 from urlresolver.plugins.lib import helpers
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
 
-class EvoLoadResolver(UrlResolver):
-    name = "evoload"
-    domains = ["evoload.io"]
-    pattern = r'(?://|\.)(evoload\.io)/(?:e|f|v)/([0-9a-zA-Z]+)'
+class StreamLareResolver(UrlResolver):
+    name = "streamlare"
+    domains = ["streamlare.com"]
+    pattern = r'(?://|\.)(streamlare\.com)/(?:e|v)/([0-9A-Za-z]+)'
 
     def get_media_url(self, host, media_id):
-        surl = 'https://evoload.io/SecurePlayer'
         web_url = self.get_url(host, media_id)
-        rurl = 'https://{0}/'.format(host)
+        api_url = 'https://streamlare.com/api/video/get'
         headers = {'User-Agent': common.FF_USER_AGENT,
-                   'Referer': rurl}
-        html = self.net.http_GET(web_url, headers).content
-        passe = re.search('<div id="captcha_pass" value="(.+?)"></div>', html).group(1)
-        headers.update({'Origin': rurl[:-1]})
-        crsv = self.net.http_GET('https://csrv.evosrv.com/captcha?m412548', headers).content
-        post = {"code": media_id, "csrv_token": crsv, "pass": passe, "token": "ok"}
-        shtml = self.net.http_POST(surl, form_data=post, headers=headers, jdata=True).content
-        r = json.loads(shtml).get('stream')
-        if r:
-            surl = r.get('backup') if r.get('backup') else r.get('src')
-            if surl:
-                return surl + helpers.append_headers(headers)
+                   'Referer': web_url,
+                   'X-Requested-With': 'XMLHttpRequest'}
+        data = {'id': media_id}
+        html = self.net.http_POST(api_url, headers=headers, form_data=data, jdata=True).content
+        items = json.loads(html).get('result')
+        sources = [('540p' if item == 'Original' else item, items.get(item).get('src')) for item in items.keys()]
+        if sources:
+            headers.pop('X-Requested-With')
+            sources.sort(key=lambda x: int(x[0][:-1]), reverse=True)
+            return helpers.pick_source(sources) + helpers.append_headers(headers)
 
         raise ResolverError('File Not Found or removed')
 

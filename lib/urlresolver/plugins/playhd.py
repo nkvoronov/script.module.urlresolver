@@ -1,6 +1,6 @@
 """
     Plugin for URLResolver
-    Copyright (C) 2021  script.module.urlresolver
+    Copyright (C) 2021 gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -9,20 +9,20 @@
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from urlresolver.plugins.__generic_resolver__ import GenericResolver
 
 
-class ItemFixResolver(GenericResolver):
-    name = "itemfix"
-    domains = ["itemfix.com"]
-    pattern = r'(?://|\.)(itemfix\.com)/v\?t=([0-9A-Za-z_]+)'
+class PlayHDResolver(GenericResolver):
+    name = 'playhd'
+    domains = ['playhd.one', 'playdrive.xyz']
+    pattern = r'(?://|\.)(play(?:hd|drive)\.(?:one|xyz))/e/([0-9a-zA-Z]+)'
 
     def get_url(self, host, media_id):
-        return self._default_get_url(host, media_id, template='https://www.{host}/v?t={media_id}')
+        return self._default_get_url(host, media_id, 'https://{host}/e/{media_id}/')
