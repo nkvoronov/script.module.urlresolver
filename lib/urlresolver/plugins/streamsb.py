@@ -25,8 +25,8 @@ from urlresolver.resolver import UrlResolver, ResolverError
 
 class StreamSBResolver(UrlResolver):
     name = "streamsb"
-    domains = ["sbembed.com", "sbembed1.com", "sbplay.org", "sbvideo.net", "streamsb.net", "sbplay.one", "cloudemb.com", "playersb.com", "tubesb.com", "sbplay1.com", "embedsb.com"]
-    pattern = r'(?://|\.)((?:tube|player|cloudemb|stream)?s?b?(?:embed\d?|embedsb\d?|play\d?|video)?\.(?:com|net|org|one))/(?:embed-|e|play|d)?/?([0-9a-zA-Z]+)'
+    domains = ["sbembed.com", "sbembed1.com", "sbplay.org", "sbvideo.net", "streamsb.net", "sbplay.one", "cloudemb.com", "playersb.com", "tubesb.com", "sbplay1.com", "embedsb.com", "sbfull.com"]
+    pattern = r'(?://|\.)((?:tube|player|cloudemb|stream|sbfull)?s?b?(?:embed\d?|embedsb\d?|play\d?|video)?\.(?:com|net|org|one))/(?:embed-|e|play|d)?/?([0-9a-zA-Z]+)'
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)

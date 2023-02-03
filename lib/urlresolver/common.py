@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
+import xbmc
 import hashlib
 from urlresolver.lib import log_utils
 from urlresolver.lib.net import Net, get_ua  # @UnusedImport  # NOQA
@@ -113,3 +114,10 @@ def encrypt_py(plain_text, key):
         cipher_text = ''
 
     return cipher_text
+    
+def log(*args):
+    #if addon.setting('debug') == 'false':
+    #    return
+    for arg in args:
+        message = '## %s ##: %s' % ('script.module.urlresolver', arg)
+        xbmc.log(msg=message, level=xbmc.LOGINFO)
