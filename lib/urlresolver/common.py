@@ -58,6 +58,7 @@ RAND_UA = choice(_USER_AGENTS)
 
 
 def log_file_hash(path):
+    log('common::log_file_hash')
     try:
         with open(path, 'r') as f:
             py_data = f.read()
@@ -68,6 +69,7 @@ def log_file_hash(path):
 
 
 def file_length(py_path, key=''):
+    log('common::file_length')
     try:
         with open(py_path, 'r') as f:
             old_py = f.read()
@@ -81,6 +83,7 @@ def file_length(py_path, key=''):
 
 
 def decrypt_py(cipher_text, key):
+    log('common::decrypt_py')
     if cipher_text:
         try:
             scraper_key = hashlib.sha256(key).digest()
@@ -100,6 +103,7 @@ def decrypt_py(cipher_text, key):
 
 
 def encrypt_py(plain_text, key):
+    log('common::encrypt_py')
     if plain_text:
         try:
             scraper_key = hashlib.sha256(key).digest()

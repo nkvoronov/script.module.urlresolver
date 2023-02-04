@@ -27,16 +27,21 @@ class MixdropResolver(UrlResolver):
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
+        common.log('MixdropResolver.get_media_url')
         headers = {'Origin': 'https://{}'.format(host),
                    'Referer': 'https://{}/'.format(host),
                    'User-Agent': common.RAND_UA}
         html = self.net.http_GET(web_url, headers=headers).content
         r = re.search(r'location\s*=\s*"([^"]+)', html)
         if r:
+            common.log('location')
+            common.log(r.group(1))
             web_url = 'https://{0}{1}'.format(host, r.group(1))
             html = self.net.http_GET(web_url, headers=headers).content
         if '(p,a,c,k,e,d)' in html:
+            common.log('(p,a,c,k,e,d)')
             html = helpers.get_packed_data(html)
+            common.log(html)
         r = re.search(r'(?:vsr|wurl|surl)[^=]*=\s*"([^"]+)', html)
         if r:
             headers = {'User-Agent': common.RAND_UA, 'Referer': web_url}

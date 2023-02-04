@@ -64,6 +64,7 @@ class UrlResolver(object):
             If the media_id could be resolved, a string containing the direct
             URL to the media file, if not, raises ResolverError.
         """
+        common.log('UrlResolver.get_media_url')
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -78,9 +79,11 @@ class UrlResolver(object):
         Returns:
             a valid url on the host this resolver resolves
         """
+        common.log('UrlResolver.get_url')
         raise NotImplementedError
 
     def get_host_and_id(self, url):
+        common.log('UrlResolver.get_host_and_id')
         """
         The method that converts a host and media_id into a valid url
 
@@ -106,6 +109,7 @@ class UrlResolver(object):
             True if this plugin thinks it can handle the web_url or host
             otherwise False.
         """
+        common.log('UrlResolver.valid_url')
         if isinstance(host, six.string_types):
             host = host.lower()
 
@@ -120,6 +124,7 @@ class UrlResolver(object):
         You need to override this to return True, if you are implementing a universal resolver
         like real-debrid etc., which handles multiple hosts
         """
+        common.log('UrlResolver.isUniversal')
         return False
 
     @classmethod
@@ -128,6 +133,7 @@ class UrlResolver(object):
         You need to override this to return True, if you are implementing a resolver like openload etc.,
         which handles pairing or captcha hosts
         """
+        common.log('UrlResolver.isPopup')
         return False
 
     def login(self):
@@ -136,6 +142,7 @@ class UrlResolver(object):
         normally involve posting credentials (stored in your plugin's settings)
         to a web page which will set cookies.
         """
+        common.log('UrlResolver.login')
         return True
 
     @classmethod
@@ -153,6 +160,7 @@ class UrlResolver(object):
         Returns:
             A list containing XML elements that will be valid in settings.xml
         """
+        common.log('UrlResolver.get_settings_xml')
         xml = [
             '<setting id="%s_priority" type="number" label="%s" default="100"/>' % (cls.__name__, common.i18n('priority')),
             '<setting id="%s_enabled" ''type="bool" label="%s" default="true"/>' % (cls.__name__, common.i18n('enabled'))
@@ -163,14 +171,17 @@ class UrlResolver(object):
 
     @classmethod
     def set_setting(cls, key, value):
+        common.log('UrlResolver.set_setting')
         common.set_setting('%s_%s' % (cls.__name__, key), str(value))
 
     @classmethod
     def get_setting(cls, key):
+        common.log('UrlResolver.get_setting')
         return common.get_setting('%s_%s' % (cls.__name__, key))
 
     @classmethod
     def _get_priority(cls):
+        common.log('UrlResolver._get_priority')
         try:
             return int(cls.get_setting('priority'))
         except:
@@ -178,10 +189,12 @@ class UrlResolver(object):
 
     @classmethod
     def _is_enabled(cls):
+        common.log('UrlResolver._is_enabled')
         # default behaviour is enabled is True if resolver is enabled, or has login set to "true", or doesn't have the setting
         return cls.get_setting('enabled') == 'true' and cls.get_setting('login') in ['', 'true']
 
     def _get_host(self, host):
+        common.log('UrlResolver._get_host')
         if '.' not in host:
             for domain in self.domains:
                 if host in domain:
@@ -190,6 +203,7 @@ class UrlResolver(object):
         return host
 
     def _default_get_url(self, host, media_id, template=None):
+        common.log('UrlResolver._default_get_url')
         if template is None:
             template = 'http://{host}/embed-{media_id}.html'
         host = self._get_host(host)
@@ -197,6 +211,7 @@ class UrlResolver(object):
 
     @common.cache.cache_method(cache_limit=1)
     def _auto_update(self, py_source, py_path, key=''):
+        common.log('UrlResolver._auto_update')
         try:
             if self.get_setting('auto_update') == 'true' and py_source:
                 headers = self.net.http_HEAD(py_source).get_headers(as_dict=True)

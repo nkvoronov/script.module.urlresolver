@@ -81,8 +81,10 @@ def append_headers(headers):
 
 
 def get_packed_data(html):
+    common.log('helpers::get_packed_data')
     packed_data = ''
     for match in re.finditer(r'(eval\s*\(function.*?)</script>', html, re.DOTALL | re.I):
+        common.log(match.group(1))
         if jsunpack.detect(match.group(1)):
             packed_data += jsunpack.unpack(match.group(1))
 

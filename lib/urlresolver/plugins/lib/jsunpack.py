@@ -36,10 +36,12 @@
 import re
 import binascii
 from six import PY2
+from urlresolver import common
 
 
 def detect(source):
     """Detects whether `source` is P.A.C.K.E.R. coded."""
+    common.log('jsunpack::detect')
     mystr = re.search(
         r"eval[ ]*\([ ]*function[ ]*\([ ]*p[ ]*,[ ]*a[ ]*,[ ]*c["
         r" ]*,[ ]*k[ ]*,[ ]*e[ ]*,[ ]*",
@@ -50,11 +52,19 @@ def detect(source):
 
 def unpack(source):
     """Unpacks P.A.C.K.E.R. packed js code."""
+    common.log('jsunpack::unpack')
     payload, symtab, radix, count = _filterargs(source)
+
+    common.log(payload)
+    common.log(symtab)
+    common.log(len(symtab))
+    common.log(radix)
+    common.log(count)
 
     if count != len(symtab):
         raise UnpackingError('Malformed p.a.c.k.e.r. symtab.')
 
+    common.log('jsunpack::unpack2')
     try:
         unbase = Unbaser(radix)
     except TypeError:
@@ -62,10 +72,12 @@ def unpack(source):
 
     def lookup(match):
         """Look up symbols in the synthetic symtab."""
+        common.log('jsunpack::lookup')
         word = match.group(0)
         return symtab[int(word)] if radix == 1 else symtab[unbase(word)] or word
 
     def getstring(c, a=radix):
+        common.log('jsunpack::getstring')
         foo = chr(c % a + 161)
         if c < a:
             return foo
@@ -73,12 +85,14 @@ def unpack(source):
             return getstring(int(c / a), a) + foo
 
     payload = payload.replace("\\\\", "\\").replace("\\'", "'")
+    common.log('jsunpack::unpack3')
     p = re.search(r'eval\(function\(p,a,c,k,e.+?String\.fromCharCode\(([^)]+)', source)
     if p:
         pnew = re.findall(r'String\.fromCharCode\(([^)]+)', source)[0].split('+')[1] == '161'
     else:
         pnew = False
-
+    common.log('jsunpack::unpack4')
+    common.log(pnew)
     if pnew:
         for i in range(count - 1, -1, -1):
             payload = payload.replace(getstring(i).decode('latin-1') if PY2 else getstring(i), symtab[i])
@@ -90,6 +104,7 @@ def unpack(source):
 
 def _filterargs(source):
     """Juice from a source file the four args needed by decoder."""
+    common.log('jsunpack::_filterargs')
     argsregex = r"}\s*\('(.*)',\s*(.*?),\s*(\d+),\s*'(.*?)'\.split\('\|'\)"
     args = re.search(argsregex, source, re.DOTALL).groups()
 
@@ -103,6 +118,7 @@ def _filterargs(source):
 
 def _replacestrings(source):
     """Strip string lookup table (list) and replace values in source."""
+    common.log('jsunpack::_replacestrings')
     match = re.search(r'var *(_\w+)=\["(.*?)"];', source, re.DOTALL)
 
     if match:
@@ -121,6 +137,7 @@ def _replacestrings(source):
 
 def _replacejsstrings(source):
     """Strip JS string encodings and replace values in source."""
+    common.log('jsunpack::_replacejsstrings')
     match = re.findall(r'\\x([0-7][0-9A-F])', source)
 
     if match:
