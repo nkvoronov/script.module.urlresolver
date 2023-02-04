@@ -207,7 +207,7 @@ class HostedMediaFile:
 
         self.__resolvers = []  # No resolvers.
         self._valid_url = False
-        return ""
+        return 'none'
 
     def valid_url(self):
         """
