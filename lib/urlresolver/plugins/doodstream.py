@@ -31,21 +31,31 @@ class DoodStreamResolver(UrlResolver):
 
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
+        common.log('DoodStreamResolver.get_media_url')
         headers = {'User-Agent': common.RAND_UA,
                    'Referer': 'https://{0}/'.format(host)}
 
         r = self.net.http_GET(web_url, headers=headers)
+        common.log(r.get_url())
         if r.get_url() != web_url:
+            common.log('r.get_url() != web_url')
             host = re.findall(r'(?://|\.)([^/]+)', r.get_url())[0]
+            common.log(host)
             web_url = self.get_url(host, media_id)
+            common.log(web_url)
         headers.update({'Referer': web_url})
 
         html = r.content
         match = re.search(r'''dsplayer\.hotkeys[^']+'([^']+).+?function\s*makePlay.+?return[^?]+([^"]+)''', html, re.DOTALL)
         if match:
+            common.log('match')
             token = match.group(2)
+            common.log(token)
             url = 'https://{0}{1}'.format(host, match.group(1))
+            common.log(url)
             html = self.net.http_GET(url, headers=headers).content
+            common.log(html)
+            common.log(str(int(time.time() * 1000)))
             return self.dood_decode(html) + token + str(int(time.time() * 1000)) + helpers.append_headers(headers)
 
         raise ResolverError('Video Link Not Found')
@@ -54,5 +64,9 @@ class DoodStreamResolver(UrlResolver):
         return self._default_get_url(host, media_id, template='https://{host}/e/{media_id}')
 
     def dood_decode(self, data):
+        common.log('DoodStreamResolver.dood_decode')
         t = string.ascii_letters + string.digits
+        common.log(t)
+        s = ''.join([random.choice(t) for _ in range(10)])
+        common.log(s)
         return data + ''.join([random.choice(t) for _ in range(10)])
